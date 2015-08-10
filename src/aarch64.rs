@@ -1,5 +1,7 @@
 use super::*;
-use super::bitcast;
+use super::{bitcast, Simd2, simd_cast};
+
+pub use super::sixty_four::{f64x2, i64x2, u64x2, bool64ix2, bool64fx2};
 
 extern "platform-intrinsic" {
     fn aarch64_vsqrtq_f32(x: f32x4) -> f32x4;
@@ -54,4 +56,16 @@ bool_impls! {
     bool8ix16, aarch64_vminvq_u8, aarch64_vmaxvq_u8;
     bool16ix8, aarch64_vminvq_u16, aarch64_vmaxvq_u16;
     bool32ix4, aarch64_vminvq_u32, aarch64_vmaxvq_u32;
+}
+
+pub trait F32x4 {
+    fn to_f64(self) -> f64x2;
+}
+impl F32x4 for f32x4 {
+    #[inline]
+    fn to_f64(self) -> f64x2 {
+        unsafe {
+            simd_cast(Simd2(self.0, self.1))
+        }
+    }
 }

@@ -1,5 +1,7 @@
 use super::*;
-use super::bitcast;
+use super::{bitcast, Simd2, simd_cast};
+
+pub use super::sixty_four::{f64x2, i64x2, u64x2, bool64ix2, bool64fx2};
 
 //pub use super::{u64x2, i64x2, f64x2, bool64ix2, bool64fx2};
 
@@ -60,4 +62,16 @@ bool_impls! {
     bool8ix16, x86_mm_movemask_epi8, 16;
     bool16ix8, x86_mm_movemask_epi8, 16;
     bool32ix4, x86_mm_movemask_epi8, 16;
+}
+
+pub trait F32x4 {
+    fn to_f64(self) -> f64x2;
+}
+impl F32x4 for f32x4 {
+    #[inline]
+    fn to_f64(self) -> f64x2 {
+        unsafe {
+            simd_cast(Simd2(self.0, self.1))
+        }
+    }
 }

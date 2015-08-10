@@ -1,6 +1,11 @@
+#![feature(cfg_target_feature)]
+
 extern crate simd;
 
-use simd::f64x2;
+#[cfg(target_feature = "sse2")]
+use simd::sse2::*;
+#[cfg(target_platform = "aarch64")]
+use simd::aarch64::*;
 
 const PI: f64 = 3.141592653589793;
 const SOLAR_MASS: f64 = 4.0 * PI * PI;
