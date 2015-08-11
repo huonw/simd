@@ -5,6 +5,7 @@ pub use super::sixty_four::{f64x2, i64x2, u64x2, bool64ix2, bool64fx2};
 
 //pub use super::{u64x2, i64x2, f64x2, bool64ix2, bool64fx2};
 
+#[allow(dead_code)]
 extern "platform-intrinsic" {
     fn x86_mm_sqrt_ps(x: f32x4) -> f32x4;
 
@@ -17,6 +18,29 @@ extern "platform-intrinsic" {
 
     fn x86_mm_movemask_ps(x: f32x4) -> i32;
     fn x86_mm_movemask_epi8(x: u8x16) -> i32;
+
+    fn x86_mm_adds_epi16(x: i16x8, y: i16x8) -> i16x8;
+    fn x86_mm_adds_epi8(x: i8x16, y: i8x16) -> i8x16;
+    fn x86_mm_adds_epu16(x: i16x8, y: i16x8) -> i16x8;
+    fn x86_mm_adds_epu8(x: i8x16, y: i8x16) -> i8x16;
+    fn x86_mm_avg_epu16(x: i16x8, y: i16x8) -> i16x8;
+    fn x86_mm_avg_epu8(x: i8x16, y: i8x16) -> i8x16;
+    fn x86_mm_madd_epi16(x: i16x8, y: i16x8) -> i32x4;
+    fn x86_mm_max_epi16(x: i16x8, y: i16x8) -> i16x8;
+    fn x86_mm_max_epu8(x: i8x16, y: i8x16) -> i8x16;
+    fn x86_mm_min_epi16(x: i16x8, y: i16x8) -> i16x8;
+    fn x86_mm_min_epu8(x: i8x16, y: i8x16) -> i8x16;
+    fn x86_mm_mul_epu32(x: i32x4, y: i32x4) -> i64x2;
+    fn x86_mm_mulhi_epi16(x: i8x16, y: i8x16) -> i8x16;
+    fn x86_mm_mulhi_epu16(x: i8x16, y: i8x16) -> i8x16;
+    fn x86_mm_packs_epi16(x: i16x8, y: i16x8) -> i8x16;
+    fn x86_mm_packs_epi32(x: i32x4, y: i32x4) -> i16x8;
+    fn x86_mm_packus_epi16(x: i16x8, y: i16x8) -> i8x16;
+    fn x86_mm_sad_epu8(x: i8x16, y: i8x16) -> i64x2;
+    fn x86_mm_subs_epi16(x: i16x8, y: i16x8) -> i16x8;
+    fn x86_mm_subs_epi8(x: i8x16, y: i8x16) -> i8x16;
+    fn x86_mm_subs_epu16(x: i16x8, y: i16x8) -> i16x8;
+    fn x86_mm_subs_epu8(x: i8x16, y: i8x16) -> i8x16;
 }
 
 impl f32x4 {

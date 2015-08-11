@@ -500,10 +500,21 @@ mod sixty_four;
 
 #[cfg(target_feature = "sse2")]
 pub mod sse2;
+#[cfg(target_feature = "sse3")]
+pub mod sse3;
 #[cfg(target_feature = "ssse3")]
 pub mod ssse3;
+#[cfg(target_feature = "sse4_1")]
+pub mod sse4_1;
+#[cfg(target_feature = "sse4_2")]
+pub mod sse4_2;
+#[cfg(target_feature = "avx")]
+pub mod avx;
+#[cfg(target_feature = "avx2")]
+pub mod avx2;
+
 #[cfg(all(target_arch = "arm",
           target_feature = "neon"))]
-mod neon;
+pub mod neon;
 #[cfg(target_arch = "aarch64")]
-mod aarch64;
+pub mod aarch64;

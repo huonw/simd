@@ -1,0 +1,3 @@
+extern "platform-intrinsic" {
+
+}
