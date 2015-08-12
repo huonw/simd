@@ -103,10 +103,10 @@ simd! {
 struct Simd2<T>(T, T);
 #[allow(dead_code)]
 #[repr(simd)]
-pub struct Simd4<T>(T, T, T, T);
+struct Simd4<T>(T, T, T, T);
 #[allow(dead_code)]
 #[repr(simd)]
-pub struct Simd8<T>(T, T, T, T, T, T, T, T);
+struct Simd8<T>(T, T, T, T, T, T, T, T);
 #[allow(dead_code)]
 #[repr(simd)]
 struct Simd16<T>(T, T, T, T, T, T, T, T,
