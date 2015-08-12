@@ -127,13 +127,10 @@ extern "platform-intrinsic" {
     fn simd_gt<T: Simd<Bool = U>, U>(x: T, y: T) -> U;
     fn simd_ge<T: Simd<Bool = U>, U>(x: T, y: T) -> U;
 
-    fn simd_shuffle2<T: Simd<Elem = U>, U>(x: T, y: T, i0: u32, i1: u32) -> Simd2<U>;
-    fn simd_shuffle4<T: Simd<Elem = U>, U>(x: T, y: T, i0: u32, i1: u32, i2: u32, i3: u32) -> Simd4<U>;
-    fn simd_shuffle8<T: Simd<Elem = U>, U>(x: T, y: T, i0: u32, i1: u32, i2: u32, i3: u32, i4: u32, i5: u32, i6: u32, i7: u32) -> Simd8<U>;
-    fn simd_shuffle16<T: Simd<Elem = U>, U>(x: T, y: T,
-                                            i0: u32, i1: u32, i2: u32, i3: u32, i4: u32, i5: u32, i6: u32, i7: u32,
-                                            i8: u32, i9: u32, i10: u32, i11: u32, i12: u32, i13: u32, i14: u32, i15: u32)
-                                            -> Simd16<U>;
+    fn simd_shuffle2<T: Simd<Elem = U>, U>(x: T, y: T, idx: [u32; 2]) -> Simd2<U>;
+    fn simd_shuffle4<T: Simd<Elem = U>, U>(x: T, y: T, idx: [u32; 4]) -> Simd4<U>;
+    fn simd_shuffle8<T: Simd<Elem = U>, U>(x: T, y: T, idx: [u32; 8]) -> Simd8<U>;
+    fn simd_shuffle16<T: Simd<Elem = U>, U>(x: T, y: T, idx: [u32; 16]) -> Simd16<U>;
 
     fn simd_insert<T: Simd<Elem = U>, U>(x: T, idx: u32, val: U) -> T;
     fn simd_extract<T: Simd<Elem = U>, U>(x: T, idx: u32) -> U;
