@@ -1,8 +1,33 @@
 extern crate simd;
 use simd::u8x16;
-use simd::ssse3::*;
 
 use std::{env, process};
+
+#[cfg(target_arch = "arm")]
+#[inline(always)]
+fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
+    use simd::neon::*;
+    #[inline(always)]
+    fn split(x: u8x16) -> (u8x8, u8x8) {
+        unsafe {std::mem::transmute(x)}
+    }
+    fn join(x: u8x8, y: u8x8) -> u8x16 {
+        unsafe {std::mem::transmute((x, y))}
+    }
+
+    let (t0, t1) = split(x);
+    let (i0, i1) = split(y);
+    join(i0.table_lookup_2(t0, t1),
+         i1.table_lookup_2(t0, t1))
+}
+
+#[cfg(any(target_arch = "x86",
+          target_arch = "x86_64"))]
+#[inline(always)]
+fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
+    use simd::ssse3::*;
+    x.shuf(y)
+}
 
 struct State {
     s: [u8; 16],
@@ -51,7 +76,7 @@ impl State {
         }
     }
     fn rotate(&mut self, n: usize) {
-        self.load_s().shuf(self.rotate_masks[n]).store(&mut self.s, 0)
+        shuffle(self.load_s(), self.rotate_masks[n]).store(&mut self.s, 0)
     }
 
     fn load_s(&self) -> u8x16 {
@@ -113,20 +138,20 @@ impl State {
                 let mut toterm2 = pk1.start;
 
                 while toterm1 != 0 && toterm2 != 0 {
-                    perm1 = perm1.shuf(self.flip_masks[toterm1 as usize]);
-                    perm2 = perm2.shuf(self.flip_masks[toterm2 as usize]);
+                    perm1 = shuffle(perm1, self.flip_masks[toterm1 as usize]);
+                    perm2 = shuffle(perm2, self.flip_masks[toterm2 as usize]);
                     toterm1 = perm1.extract(0);
                     toterm2 = perm2.extract(0);
 
                     f1 += 1; f2 += 1;
                 }
                 while toterm1 != 0 {
-                    perm1 = perm1.shuf(self.flip_masks[toterm1 as usize]);
+                    perm1 = shuffle(perm1, self.flip_masks[toterm1 as usize]);
                     toterm1 = perm1.extract(0);
                     f1 += 1;
                 }
                 while toterm2 != 0 {
-                    perm2 = perm2.shuf(self.flip_masks[toterm2 as usize]);
+                    perm2 = shuffle(perm2, self.flip_masks[toterm2 as usize]);
                     toterm2 = perm2.extract(0);
                     f2 += 1;
                 }
@@ -144,7 +169,7 @@ impl State {
                 let mut f = 0;
                 let mut toterm = pk.start;
                 while toterm != 0 {
-                    perm = perm.shuf(self.flip_masks[toterm as usize]);
+                    perm = shuffle(perm, self.flip_masks[toterm as usize]);
                     toterm = perm.extract(0);
                     f += 1;
                 }
