@@ -1,5 +1,5 @@
 use super::super::*;
-use {bitcast, Simd2, simd_cast};
+use {bitcast, simd_cast, f32x2};
 
 pub use sixty_four::{f64x2, i64x2, u64x2, bool64ix2, bool64fx2};
 
@@ -95,7 +95,7 @@ impl F32x4 for f32x4 {
     #[inline]
     fn to_f64(self) -> f64x2 {
         unsafe {
-            simd_cast(Simd2(self.0, self.1))
+            simd_cast(f32x2(self.0, self.1))
         }
     }
 }

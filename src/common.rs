@@ -1,4 +1,5 @@
 use super::*;
+#[allow(unused_imports)]
 use super::{
     simd_eq, simd_ne, simd_lt, simd_le, simd_gt, simd_ge,
     simd_shuffle2, simd_shuffle4, simd_shuffle8, simd_shuffle16,
@@ -6,7 +7,7 @@ use super::{
     simd_cast,
     simd_add, simd_sub, simd_mul, simd_div, simd_shl, simd_shr, simd_and, simd_or, simd_xor,
 
-    Unalign, bitcast, Simd2,
+    Unalign, bitcast,
 };
 use std;
 

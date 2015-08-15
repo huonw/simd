@@ -2,13 +2,14 @@
 use super::*;
 #[allow(unused_imports)]
 use super::{
+    f32x2,
     simd_eq, simd_ne, simd_lt, simd_le, simd_gt, simd_ge,
     simd_shuffle2, simd_shuffle4, simd_shuffle8, simd_shuffle16,
     simd_insert, simd_extract,
     simd_cast,
     simd_add, simd_sub, simd_mul, simd_div, simd_shl, simd_shr, simd_and, simd_or, simd_xor,
 
-    Unalign, bitcast, Simd2,
+    Unalign, bitcast,
 };
 use std;
 
@@ -83,7 +84,7 @@ impl f64x2 {
     #[inline]
     pub fn to_f32(self) -> f32x4 {
         unsafe {
-            let x: Simd2<f32> = simd_cast(self);
+            let x: f32x2 = simd_cast(self);
             f32x4::new(x.0, x.1, 0.0, 0.0)
         }
     }

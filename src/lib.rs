@@ -49,6 +49,32 @@ pub struct bool32ix4(i32, i32, i32, i32);
 #[derive(Debug, Copy)]
 pub struct bool32fx4(i32, i32, i32, i32);
 
+#[allow(dead_code)]
+#[repr(simd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Copy)]
+struct u32x2(u32, u32);
+#[allow(dead_code)]
+#[repr(simd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Copy)]
+struct i32x2(i32, i32);
+#[allow(dead_code)]
+#[repr(simd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Copy)]
+struct f32x2(f32, f32);
+#[allow(dead_code)]
+#[repr(simd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Copy)]
+struct bool32ix2(i32, i32);
+#[allow(dead_code)]
+#[repr(simd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Copy)]
+struct bool32fx2(i32, i32);
+
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
@@ -96,6 +122,9 @@ simd! {
     bool16ix8: i16x8 = i16, u16x8 = u16, bool16ix8 = bool16i;
     bool32ix4: i32x4 = i32, u32x4 = u32, bool32ix4 = bool32i;
     bool32fx4: f32x4 = f32, bool32fx4 = bool32f;
+
+    bool32ix2: i32x2 = i32, u32x2 = u32, bool32ix2 = bool32i;
+    bool32fx2: f32x2 = f32, bool32fx2 = bool32f;
 }
 
 #[allow(dead_code)]
@@ -107,26 +136,6 @@ fn bitcast<T: Simd, U: Simd>(x: T) -> U {
 }
 
 #[allow(dead_code)]
-#[repr(simd)]
-struct Simd2<T>(T, T);
-#[allow(dead_code)]
-#[repr(simd)]
-struct Simd4<T>(T, T, T, T);
-#[allow(dead_code)]
-#[repr(simd)]
-struct Simd8<T>(T, T, T, T, T, T, T, T);
-#[allow(dead_code)]
-#[repr(simd)]
-struct Simd16<T>(T, T, T, T, T, T, T, T,
-                 T, T, T, T, T, T, T, T);
-
-impl Copy for Simd2<f32> {}
-impl Copy for Simd2<bool32f> {}
-simd! {
-    Simd2<bool32f>: Simd2<f32> = f32, Simd2<bool32f> = bool32f;
-}
-
-#[allow(dead_code)]
 extern "platform-intrinsic" {
     fn simd_eq<T: Simd<Bool = U>, U>(x: T, y: T) -> U;
     fn simd_ne<T: Simd<Bool = U>, U>(x: T, y: T) -> U;
@@ -135,10 +144,10 @@ extern "platform-intrinsic" {
     fn simd_gt<T: Simd<Bool = U>, U>(x: T, y: T) -> U;
     fn simd_ge<T: Simd<Bool = U>, U>(x: T, y: T) -> U;
 
-    fn simd_shuffle2<T: Simd<Elem = U>, U>(x: T, y: T, idx: [u32; 2]) -> Simd2<U>;
-    fn simd_shuffle4<T: Simd<Elem = U>, U>(x: T, y: T, idx: [u32; 4]) -> Simd4<U>;
-    fn simd_shuffle8<T: Simd<Elem = U>, U>(x: T, y: T, idx: [u32; 8]) -> Simd8<U>;
-    fn simd_shuffle16<T: Simd<Elem = U>, U>(x: T, y: T, idx: [u32; 16]) -> Simd16<U>;
+    fn simd_shuffle2<T: Simd, U: Simd<Elem = T::Elem>>(x: T, y: T, idx: [u32; 2]) -> U;
+    fn simd_shuffle4<T: Simd, U: Simd<Elem = T::Elem>>(x: T, y: T, idx: [u32; 4]) -> U;
+    fn simd_shuffle8<T: Simd, U: Simd<Elem = T::Elem>>(x: T, y: T, idx: [u32; 8]) -> U;
+    fn simd_shuffle16<T: Simd, U: Simd<Elem = T::Elem>>(x: T, y: T, idx: [u32; 16]) -> U;
 
     fn simd_insert<T: Simd<Elem = U>, U>(x: T, idx: u32, val: U) -> T;
     fn simd_extract<T: Simd<Elem = U>, U>(x: T, idx: u32) -> U;
