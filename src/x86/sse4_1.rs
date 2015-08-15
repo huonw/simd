@@ -1,3 +1,7 @@
+use super::super::*;
+use x86::sse2::*;
+
+#[allow(dead_code)]
 extern "platform-intrinsic" {
     fn x86_mm_max_epi32(x: i32x4, y: i32x4) -> i32x4;
     fn x86_mm_max_epi8(x: i8x16, y: i8x16) -> i8x16;

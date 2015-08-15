@@ -1,4 +1,4 @@
-use avx::*;
+use x86::avx::*;
 
 #[allow(dead_code)]
 extern "platform-intrinsic" {

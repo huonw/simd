@@ -1,5 +1,5 @@
-use super::*;
-use super::bitcast;
+use super::super::*;
+use bitcast;
 
 #[allow(dead_code)]
 extern "platform-intrinsic" {

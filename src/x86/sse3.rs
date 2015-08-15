@@ -1,5 +1,5 @@
 use sixty_four::*;
-use super::*;
+use super::super::*;
 
 #[allow(dead_code)]
 extern "platform-intrinsic" {

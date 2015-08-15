@@ -1,4 +1,4 @@
-use super::*;
+use super::super::*;
 use sixty_four::*;
 
 #[repr(simd)]

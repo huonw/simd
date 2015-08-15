@@ -1,7 +1,7 @@
-use super::*;
-use super::{bitcast, Simd2, simd_cast};
+use super::super::*;
+use {bitcast, Simd2, simd_cast};
 
-pub use super::sixty_four::{f64x2, i64x2, u64x2, bool64ix2, bool64fx2};
+pub use sixty_four::{f64x2, i64x2, u64x2, bool64ix2, bool64fx2};
 
 //pub use super::{u64x2, i64x2, f64x2, bool64ix2, bool64fx2};
 
