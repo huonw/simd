@@ -1,2 +1,2 @@
-#[cfg(target_feature = "neon")]
+#[cfg(any(feature = "doc", target_feature = "neon"))]
 pub mod neon;

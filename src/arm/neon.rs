@@ -1,4 +1,4 @@
-use super::*;
+use super::super::*;
 use std::mem;
 use sixty_four::{i64x2, u64x2};
 
@@ -25,7 +25,7 @@ pub struct u8x8(u8, u8, u8, u8,
 #[repr(simd)]
 #[derive(Copy, Clone)]
 pub struct i8x8(i8, i8, i8, i8,
-            i8, i8, i8, i8);
+                i8, i8, i8, i8);
 
 #[repr(simd)]
 #[derive(Copy, Clone)]

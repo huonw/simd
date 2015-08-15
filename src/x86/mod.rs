@@ -1,14 +1,14 @@
-#[cfg(target_feature = "sse2")]
+#[cfg(any(feature = "doc", target_feature = "sse2"))]
 pub mod sse2;
-#[cfg(target_feature = "sse3")]
+#[cfg(any(feature = "doc", target_feature = "sse3"))]
 pub mod sse3;
-#[cfg(target_feature = "ssse3")]
+#[cfg(any(feature = "doc", target_feature = "ssse3"))]
 pub mod ssse3;
-#[cfg(target_feature = "sse4.1")]
+#[cfg(any(feature = "doc", target_feature = "sse4.1"))]
 pub mod sse4_1;
-#[cfg(target_feature = "sse4.2")]
+#[cfg(any(feature = "doc", target_feature = "sse4.2"))]
 pub mod sse4_2;
-#[cfg(target_feature = "avx")]
+#[cfg(any(feature = "doc", target_feature = "avx"))]
 pub mod avx;
-#[cfg(target_feature = "avx2")]
+#[cfg(any(feature = "doc", target_feature = "avx2"))]
 pub mod avx2;

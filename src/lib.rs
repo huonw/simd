@@ -172,10 +172,12 @@ struct Unalign<T>(T);
 mod common;
 mod sixty_four;
 
-#[cfg(any(target_arch = "x86",
+
+#[cfg(any(feature = "doc",
+          target_arch = "x86",
           target_arch = "x86_64"))]
-mod x86;
-#[cfg(target_arch = "arm")]
-mod arm;
-#[cfg(target_arch = "aarch64")]
-mod aarch64;
+pub mod x86;
+#[cfg(any(feature = "doc", target_arch = "arm"))]
+pub mod arm;
+#[cfg(any(feature = "doc", target_arch = "aarch64"))]
+pub mod aarch64;

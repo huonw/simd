@@ -4,9 +4,9 @@
 extern crate simd;
 
 #[cfg(target_feature = "sse2")]
-use simd::sse2::f64x2;
+use simd::x86::sse2::f64x2;
 #[cfg(target_platform = "aarch64")]
-use simd::aarch64::f64x2;
+use simd::aarch64::neon::f64x2;
 
 fn A(i: usize, j: usize) -> f64 {
     ((i + j) * (i + j + 1) / 2 + i + 1) as f64

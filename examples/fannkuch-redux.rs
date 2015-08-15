@@ -6,7 +6,7 @@ use std::{env, process};
 #[cfg(target_arch = "arm")]
 #[inline(always)]
 fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
-    use simd::neon::*;
+    use simd::arm::neon::*;
     #[inline(always)]
     fn split(x: u8x16) -> (u8x8, u8x8) {
         unsafe {std::mem::transmute(x)}
@@ -25,7 +25,7 @@ fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
           target_arch = "x86_64"))]
 #[inline(always)]
 fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
-    use simd::ssse3::*;
+    use simd::x86::ssse3::*;
     x.shuf(y)
 }
 
