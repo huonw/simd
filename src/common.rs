@@ -97,7 +97,7 @@ macro_rules! basic_impls {
             /// This is equivalent to the following, but is possibly
             /// more efficient:
             ///
-            /// ```rust
+            /// ```rust,ignore
             /// Self::new(array[idx], array[idx + 1], ...)
             /// ```
             ///
@@ -120,7 +120,7 @@ macro_rules! basic_impls {
             /// This is equivalent to the following, but is possibly
             /// more efficient:
             ///
-            /// ```rust
+            /// ```rust,ignore
             /// array[i] = self.extract(0);
             /// array[i + 1] = self.extract(1);
             /// // ...
@@ -216,7 +216,7 @@ macro_rules! bool_impls {
             /// This is equivalent to the following, but is possibly
             /// more efficient:
             ///
-            /// ```rust
+            /// ```rust,ignore
             /// T::new(if self.extract(0) { then.extract(0) } else { else_.extract(0) },
             ///        if self.extract(1) { then.extract(1) } else { else_.extract(1) },
             ///        ...)
@@ -229,11 +229,25 @@ macro_rules! bool_impls {
             }
 
             /// Check if every element of `self` is true.
+            ///
+            /// This is equivalent to the following, but is possibly
+            /// more efficient:
+            ///
+            /// ```rust,ignore
+            /// self.extract(0) && self.extract(1) && ...
+            /// ```
             #[inline]
             pub fn all(self) -> bool {
                 common::$all(self)
             }
             /// Check if any element of `self` is true.
+            ///
+            /// This is equivalent to the following, but is possibly
+            /// more efficient:
+            ///
+            /// ```rust,ignore
+            /// self.extract(0) || self.extract(1) || ...
+            /// ```
             #[inline]
             pub fn any(self) -> bool {
                 common::$any(self)
@@ -323,7 +337,7 @@ impl f32x4 {
     /// This is equivalent to the following, but is possibly more
     /// efficient:
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// f32x4::new(self.extract(0).max(other.extract(0)),
     ///            self.extract(1).max(other.extract(1)),
     ///            ...)
@@ -337,7 +351,7 @@ impl f32x4 {
     /// This is equivalent to the following, but is possibly more
     /// efficient:
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// f32x4::new(self.extract(0).min(other.extract(0)),
     ///            self.extract(1).min(other.extract(1)),
     ///            ...)

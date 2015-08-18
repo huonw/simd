@@ -1,34 +1,57 @@
+#![feature(cfg_target_feature)]
 extern crate simd;
+#[macro_use] extern crate cfg_if;
 use simd::u8x16;
 
 use std::{env, process};
 
-#[cfg(target_arch = "arm")]
-#[inline(always)]
-fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
-    use simd::arm::neon::*;
-    #[inline(always)]
-    fn split(x: u8x16) -> (u8x8, u8x8) {
-        unsafe {std::mem::transmute(x)}
+cfg_if! {
+    if #[cfg(target_feature = "neon")] {
+        #[inline(always)]
+        fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
+            use simd::arm::neon::*;
+            #[inline(always)]
+            fn split(x: u8x16) -> (u8x8, u8x8) {
+                unsafe {std::mem::transmute(x)}
+            }
+            fn join(x: u8x8, y: u8x8) -> u8x16 {
+                unsafe {std::mem::transmute((x, y))}
+            }
+
+            let (t0, t1) = split(x);
+            let (i0, i1) = split(y);
+            join(i0.table_lookup_2(t0, t1),
+                 i1.table_lookup_2(t0, t1))
+        }
+    } else if #[cfg(target_feature = "ssse3")] {
+        #[inline(always)]
+        fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
+            use simd::x86::ssse3::*;
+            x.shuffle_bytes(y)
+        }
+    } else {
+        // slow fallback, so tests work
+        #[inline(always)]
+        fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
+            u8x16::new(x.extract(y.extract(0) as u32),
+                       x.extract(y.extract(1) as u32),
+                       x.extract(y.extract(2) as u32),
+                       x.extract(y.extract(3) as u32),
+                       x.extract(y.extract(4) as u32),
+                       x.extract(y.extract(5) as u32),
+                       x.extract(y.extract(6) as u32),
+                       x.extract(y.extract(7) as u32),
+                       x.extract(y.extract(8) as u32),
+                       x.extract(y.extract(9) as u32),
+                       x.extract(y.extract(10) as u32),
+                       x.extract(y.extract(11) as u32),
+                       x.extract(y.extract(12) as u32),
+                       x.extract(y.extract(13) as u32),
+                       x.extract(y.extract(14) as u32),
+                       x.extract(y.extract(15) as u32))
+        }
     }
-    fn join(x: u8x8, y: u8x8) -> u8x16 {
-        unsafe {std::mem::transmute((x, y))}
-    }
-
-    let (t0, t1) = split(x);
-    let (i0, i1) = split(y);
-    join(i0.table_lookup_2(t0, t1),
-         i1.table_lookup_2(t0, t1))
 }
-
-#[cfg(any(target_arch = "x86",
-          target_arch = "x86_64"))]
-#[inline(always)]
-fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
-    use simd::x86::ssse3::*;
-    x.shuffle_bytes(y)
-}
-
 struct State {
     s: [u8; 16],
     flip_masks: [u8x16; 16],

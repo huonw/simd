@@ -7,6 +7,9 @@ authors = ["Huon Wilson <dbau.pp+github@gmail.com>"]
 serde = { version = "0.4", optional = true }
 serde_macros = { version = "0.4", optional = true }
 
+[dev-dependencies]
+cfg-if = "0.1"
+
 [features]
 
 doc = []
