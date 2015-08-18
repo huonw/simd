@@ -1,5 +1,8 @@
 //! `simd` offers a basic interface to the SIMD functionality of CPUs.
 //!
+//! **Warning** This is an actively developed work-in-progress, and
+//! may/will break from commit to commit.
+//!
 //! # Installation
 //!
 //! Via git:
