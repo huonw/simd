@@ -297,3 +297,51 @@ fn inverse_simd4(b: &mut B) {
      })
 
 }
+
+#[bench]
+fn transpose_naive(b: &mut B) {
+    let mut x = [[0_f32; 4]; 4];
+    b.iter(|| {
+        for _ in 0..100 {
+            let x = bb(&x);
+            bb(&[[x[0][0], x[1][0], x[2][0], x[3][0]],
+                 [x[0][1], x[1][1], x[2][1], x[3][1]],
+                 [x[0][2], x[1][2], x[2][2], x[3][2]],
+                 [x[0][3], x[1][3], x[2][3], x[3][3]]]);
+        }
+    })
+}
+
+#[bench]
+fn transpose_simd4(b: &mut B) {
+    let mut x = [f32x4::splat(0_f32); 4];
+
+    fn shuf0246(v: f32x4, w: f32x4) -> f32x4 {
+        f32x4::new(v.extract(0), v.extract(2),
+                   w.extract(4 - 4), w.extract(6 - 4))
+    }
+    fn shuf1357(v: f32x4, w: f32x4) -> f32x4 {
+        f32x4::new(v.extract(1), v.extract(3),
+                   w.extract(5 - 4), w.extract(7 - 4))
+    }
+    b.iter(|| {
+        for _ in 0..100 {
+            let x = bb(&x);
+            let x0 = x[0];
+            let x1 = x[1];
+            let x2 = x[2];
+            let x3 = x[3];
+
+            let a0 = shuf0246(x0, x1);
+            let a1 = shuf0246(x2, x3);
+            let a2 = shuf1357(x0, x1);
+            let a3 = shuf1357(x2, x3);
+
+            let b0 = shuf0246(a0, a1);
+            let b1 = shuf0246(a2, a3);
+            let b2 = shuf1357(a0, a1);
+            let b3 = shuf1357(a2, a3);
+            bb(&[b0, b1, b2, b3]);
+        }
+    })
+}
