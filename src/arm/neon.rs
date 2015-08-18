@@ -359,9 +359,6 @@ extern "platform-intrinsic" {
     fn arm_vtbx4_u8(x: u8x8, t0: u8x8, t1: u8x8, t2: u8x8, t3: u8x8, idx: u8x8) -> u8x8;
 }
 
-impl f32x4 {
-}
-
 impl u8x8 {
     #[inline]
     pub fn table_lookup_1(self, t0: u8x8) -> u8x8 {

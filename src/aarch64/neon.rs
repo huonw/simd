@@ -20,10 +20,10 @@ extern "platform-intrinsic" {
     fn aarch64_vminvq_u32(x: u32x4) -> u32;
 }
 
-pub trait F32x4 {
+pub trait Aarch64F32x4 {
     fn to_f64(self) -> f64x2;
 }
-impl F32x4 for f32x4 {
+impl Aarch64F32x4 for f32x4 {
     #[inline]
     fn to_f64(self) -> f64x2 {
         unsafe {

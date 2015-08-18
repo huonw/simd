@@ -94,10 +94,10 @@ pub mod common {
     }
 }
 
-pub trait F32x4 {
+pub trait Sse2F32x4 {
     fn to_f64(self) -> f64x2;
 }
-impl F32x4 for f32x4 {
+impl Sse2F32x4 for f32x4 {
     #[inline]
     fn to_f64(self) -> f64x2 {
         unsafe {
