@@ -11,6 +11,14 @@ use super::{
 };
 use std;
 
+#[cfg(any(target_arch = "x86",
+          target_arch = "x86_64"))]
+use x86::sse2::common;
+#[cfg(any(target_arch = "arm"))]
+use arm::neon::common;
+#[cfg(any(target_arch = "aarch64"))]
+use aarch64::neon::common;
+
 macro_rules! basic_impls {
     ($(
         $name: ident:
@@ -100,7 +108,8 @@ basic_impls! {
 macro_rules! bool_impls {
     ($(
         $name: ident:
-        $elem: ident, $repr: ident, $repr_elem: ident, $length: expr, $($first: ident),* | $($last: ident),*
+        $elem: ident, $repr: ident, $repr_elem: ident, $length: expr, $all: ident, $any: ident,
+        $($first: ident),* | $($last: ident),*
         [$($cvt: ident -> $cvt_to: ident),*];
         )*) => {
         $(impl $name {
@@ -147,6 +156,15 @@ macro_rules! bool_impls {
                 bitcast((then & self.to_repr()) | (else_ & (!self).to_repr()))
             }
 
+            #[inline]
+            pub fn all(self) -> bool {
+                common::$all(self)
+            }
+            #[inline]
+            pub fn any(self) -> bool {
+                common::$any(self)
+            }
+
             $(
                 #[inline]
                 pub fn $cvt(self) -> $cvt_to {
@@ -167,12 +185,12 @@ macro_rules! bool_impls {
 }
 
 bool_impls! {
-    bool32ix4: bool32i, i32x4, i32, 2, x0, x1 | x2, x3 [to_f -> bool32fx4];
-    bool32fx4: bool32f, i32x4, i32, 2, x0, x1 | x2, x3 [to_i -> bool32ix4];
+    bool32ix4: bool32i, i32x4, i32, 2, bool32ix4_all, bool32ix4_any, x0, x1 | x2, x3 [to_f -> bool32fx4];
+    bool32fx4: bool32f, i32x4, i32, 2, bool32fx4_all, bool32fx4_any, x0, x1 | x2, x3 [to_i -> bool32ix4];
 
-    bool16ix8: bool16i, i16x8, i16, 2, x0, x1, x2, x3 | x4, x5, x6, x7 [];
+    bool16ix8: bool16i, i16x8, i16, 2, bool16ix8_all, bool16ix8_any, x0, x1, x2, x3 | x4, x5, x6, x7 [];
 
-    bool8ix16: bool8i, i8x16, i8, 2, x0, x1, x2, x3, x4, x5, x6, x7 | x8, x9, x10, x11, x12, x13, x14, x15 [];
+    bool8ix16: bool8i, i8x16, i8, 2, bool8ix16_all, bool8ix16_any, x0, x1, x2, x3, x4, x5, x6, x7 | x8, x9, x10, x11, x12, x13, x14, x15 [];
 }
 
 impl u32x4 {
@@ -196,6 +214,26 @@ impl i32x4 {
     }
 }
 impl f32x4 {
+    #[inline]
+    pub fn sqrt(self) -> Self {
+        common::f32x4_sqrt(self)
+    }
+    #[inline]
+    pub fn approx_rsqrt(self) -> Self {
+        common::f32x4_approx_rsqrt(self)
+    }
+    #[inline]
+    pub fn approx_reciprocal(self) -> Self {
+        common::f32x4_approx_reciprocal(self)
+    }
+    #[inline]
+    pub fn max(self, other: Self) -> Self {
+        common::f32x4_max(self, other)
+    }
+    #[inline]
+    pub fn min(self, other: Self) -> Self {
+        common::f32x4_min(self, other)
+    }
     #[inline]
     pub fn to_i32(self) -> i32x4 {
         unsafe {simd_cast(self)}

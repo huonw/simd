@@ -1,5 +1,5 @@
 use super::super::*;
-use {bitcast, simd_cast, f32x2};
+use {simd_cast, f32x2};
 
 pub use sixty_four::{f64x2, i64x2, u64x2, bool64ix2, bool64fx2};
 
@@ -43,49 +43,54 @@ extern "platform-intrinsic" {
     fn x86_mm_subs_epu8(x: i8x16, y: i8x16) -> i8x16;
 }
 
-impl f32x4 {
-    #[inline]
-    pub fn sqrt(self) -> f32x4 {
-        unsafe {x86_mm_sqrt_ps(self)}
-    }
-    #[inline]
-    pub fn approx_rsqrt(self) -> f32x4 {
-        unsafe {x86_mm_rsqrt_ps(self)}
-    }
-    #[inline]
-    pub fn approx_reciprocal(self) -> f32x4 {
-        unsafe {x86_mm_rcp_ps(self)}
-    }
-    #[inline]
-    pub fn max(self, other: f32x4) -> f32x4 {
-        unsafe {x86_mm_max_ps(self, other)}
-    }
-    #[inline]
-    pub fn min(self, other: f32x4) -> f32x4 {
-        unsafe {x86_mm_min_ps(self, other)}
-    }
-}
+pub mod common {
+    use super::super::super::*;
+    use std::mem;
 
-macro_rules! bool_impls {
-    ($($ty: ty, $movemask: ident, $width: expr;)*) => {
-        $(impl $ty {
-            #[inline]
-            pub fn any(self) -> bool {
-                unsafe {$movemask(bitcast(self)) != 0}
-            }
-            #[inline]
-            pub fn all(self) -> bool {
-                unsafe {$movemask(bitcast(self)) == (1 << $width) - 1}
-            }
-        })*
+    #[inline]
+    pub fn f32x4_sqrt(x: f32x4) -> f32x4 {
+        unsafe {super::x86_mm_sqrt_ps(x)}
     }
-}
-bool_impls! {
-    bool32fx4, x86_mm_movemask_ps, 4;
+    #[inline]
+    pub fn f32x4_approx_rsqrt(x: f32x4) -> f32x4 {
+        unsafe {super::x86_mm_rsqrt_ps(x)}
+    }
+    #[inline]
+    pub fn f32x4_approx_reciprocal(x: f32x4) -> f32x4 {
+        unsafe {super::x86_mm_rcp_ps(x)}
+    }
+    #[inline]
+    pub fn f32x4_max(x: f32x4, y: f32x4) -> f32x4 {
+        unsafe {super::x86_mm_max_ps(x, y)}
+    }
+    #[inline]
+    pub fn f32x4_min(x: f32x4, y: f32x4) -> f32x4 {
+        unsafe {super::x86_mm_min_ps(x, y)}
+    }
 
-    bool8ix16, x86_mm_movemask_epi8, 16;
-    bool16ix8, x86_mm_movemask_epi8, 16;
-    bool32ix4, x86_mm_movemask_epi8, 16;
+    macro_rules! bools {
+        ($($ty: ty, $all: ident, $any: ident, $movemask: ident, $width: expr;)*) => {
+            $(
+                pub fn $all(x: $ty) -> bool {
+                    unsafe {
+                        super::$movemask(mem::transmute(x)) == (1 << $width) - 1
+                    }
+                }
+                pub fn $any(x: $ty) -> bool {
+                    unsafe {
+                        super::$movemask(mem::transmute(x)) != 0
+                    }
+                }
+                )*
+        }
+    }
+
+    bools! {
+        bool32fx4, bool32fx4_all, bool32fx4_any, x86_mm_movemask_ps, 4;
+        bool8ix16, bool8ix16_all, bool8ix16_any, x86_mm_movemask_epi8, 16;
+        bool16ix8, bool16ix8_all, bool16ix8_any, x86_mm_movemask_epi8, 16;
+        bool32ix4, bool32ix4_all, bool32ix4_any, x86_mm_movemask_epi8, 16;
+    }
 }
 
 pub trait F32x4 {

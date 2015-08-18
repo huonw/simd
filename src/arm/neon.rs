@@ -1,5 +1,4 @@
 use super::super::*;
-use std::mem;
 use sixty_four::{i64x2, u64x2};
 
 #[repr(simd)]
@@ -360,28 +359,7 @@ extern "platform-intrinsic" {
     fn arm_vtbx4_u8(x: u8x8, t0: u8x8, t1: u8x8, t2: u8x8, t3: u8x8, idx: u8x8) -> u8x8;
 }
 
-
 impl f32x4 {
-    #[inline]
-    pub fn sqrt(self) -> Self {
-        unsafe {arm_vsqrtq_f32(self)}
-    }
-    #[inline]
-    pub fn approx_rsqrt(self) -> Self {
-        unsafe {arm_vrsqrteq_f32(self)}
-    }
-    #[inline]
-    pub fn approx_reciprocal(self) -> Self {
-        unsafe {arm_vrecpeq_f32(self)}
-    }
-    #[inline]
-    pub fn max(self, other: Self) -> Self {
-        unsafe {arm_vmaxq_f32(self, other)}
-    }
-    #[inline]
-    pub fn min(self, other: Self) -> Self {
-        unsafe {arm_vminq_f32(self, other)}
-    }
 }
 
 impl u8x8 {
@@ -403,31 +381,59 @@ impl u8x8 {
     }
 }
 
-macro_rules! bool_impls {
-    ($($outer: ident, $half: ident, $min: ident, $max: ident;)*) => {
-        $(impl $outer {
-            pub fn any(self) -> bool {
-                unsafe {
-                    let (lo, hi): ($half, $half) = mem::transmute(self);
-                    let x = $max(lo, hi);
-                    let y = $max(x, mem::uninitialized());
-                    y.0 != 0
-                }
-            }
-            pub fn all(self) -> bool {
-                unsafe {
-                    let (lo, hi): ($half, $half) = mem::transmute(self);
-                    let x = $min(lo, hi);
-                    let y = $min(x, mem::uninitialized());
-                    y.0 != 0
-                }
-            }
-        })*
+pub mod common {
+    use super::super::super::*;
+    use super::*;
+    use std::mem;
+
+    #[inline]
+    pub fn f32x4_sqrt(x: f32x4) -> f32x4 {
+        unsafe {super::arm_vsqrtq_f32(x)}
     }
-}
-bool_impls! {
-    bool32fx4, u32x2, arm_vpmin_u32, arm_vpmax_u32;
-    bool8ix16, u8x8, arm_vpmin_u8, arm_vpmax_u8;
-    bool16ix8, u16x4, arm_vpmin_u16, arm_vpmax_u16;
-    bool32ix4, u32x2, arm_vpmin_u32, arm_vpmax_u32;
+    #[inline]
+    pub fn f32x4_approx_rsqrt(x: f32x4) -> f32x4 {
+        unsafe {super::arm_vrsqrteq_f32(x)}
+    }
+    #[inline]
+    pub fn f32x4_approx_reciprocal(x: f32x4) -> f32x4 {
+        unsafe {super::arm_vrecpeq_f32(x)}
+    }
+    #[inline]
+    pub fn f32x4_max(x: f32x4, y: f32x4) -> f32x4 {
+        unsafe {super::arm_vmaxq_f32(x, y)}
+    }
+    #[inline]
+    pub fn f32x4_min(x: f32x4, y: f32x4) -> f32x4 {
+        unsafe {super::arm_vminq_f32(x, y)}
+    }
+
+    macro_rules! bools {
+        ($($ty: ty, $half: ty, $all: ident ($min: ident), $any: ident ($max: ident);)*) => {
+            $(
+                pub fn $all(x: $ty) -> bool {
+                    unsafe {
+                        let (lo, hi): ($half, $half) = mem::transmute(x);
+                        let x = super::$min(lo, hi);
+                        let y = super::$min(x, mem::uninitialized());
+                        y.0 != 0
+                    }
+                }
+                pub fn $any(x: $ty) -> bool {
+                    unsafe {
+                        let (lo, hi): ($half, $half) = mem::transmute(x);
+                        let x = super::$max(lo, hi);
+                        let y = super::$max(x, mem::uninitialized());
+                        y.0 != 0
+                    }
+                }
+                )*
+        }
+    }
+
+    bools! {
+        bool32fx4, u32x2, bool32fx4_all(arm_vpmin_u32), bool32fx4_any(arm_vpmax_u32);
+        bool8ix16, u8x8, bool8ix16_all(arm_vpmin_u8), bool8ix16_any(arm_vpmax_u8);
+        bool16ix8, u16x4, bool16ix8_all(arm_vpmin_u16), bool16ix8_any(arm_vpmax_u16);
+        bool32ix4, u32x2, bool32ix4_all(arm_vpmin_u32), bool32ix4_any(arm_vpmax_u32);
+    }
 }

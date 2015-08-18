@@ -46,9 +46,29 @@ basic_impls! {
     i64x2: i64, bool64ix2, simd_shuffle2, 2, x0 | x1;
     f64x2: f64, bool64fx2, simd_shuffle2, 2, x0 | x1;
 }
+
+mod common {
+    use super::*;
+    // naive for now
+    #[inline]
+    pub fn bool64ix2_all(x: bool64ix2) -> bool {
+        x.0 != 0 && x.1 != 0
+    }
+    #[inline]
+    pub fn bool64ix2_any(x: bool64ix2) -> bool {
+        x.0 != 0 || x.1 != 0
+    }
+    #[inline]
+    pub fn bool64fx2_all(x: bool64fx2) -> bool {
+        x.0 != 0 && x.1 != 0
+    }
+    #[inline]
+    pub fn bool64fx2_any(x: bool64fx2) -> bool {
+        x.0 != 0 || x.1 != 0
+    }}
 bool_impls! {
-    bool64ix2: bool64i, i64x2, i64, 2, x0 | x1 [to_f -> bool64fx2];
-    bool64fx2: bool64f, i64x2, i64, 2, x0 | x1 [to_i -> bool64ix2];
+    bool64ix2: bool64i, i64x2, i64, 2, bool64ix2_all, bool64ix2_any, x0 | x1 [to_f -> bool64fx2];
+    bool64fx2: bool64f, i64x2, i64, 2, bool64fx2_all, bool64fx2_any, x0 | x1 [to_i -> bool64ix2];
 }
 
 impl u64x2 {
