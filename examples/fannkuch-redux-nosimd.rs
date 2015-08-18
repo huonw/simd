@@ -128,7 +128,6 @@ fn fannkuch(n: i32) -> (i32, i32) {
     let k = perm.max() / n;
 
     for j in (0..).map(|x| x * k).take_while(|&j| j < k * n) {
-        println!("j {}", j);
         let max = cmp::min(j+k, perm.max());
 
         futures.push(thread::spawn(move|| {
