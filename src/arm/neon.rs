@@ -381,6 +381,7 @@ impl u8x8 {
     }
 }
 
+#[doc(hidden)]
 pub mod common {
     use super::super::super::*;
     use super::*;

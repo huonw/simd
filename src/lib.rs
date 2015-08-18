@@ -1,3 +1,15 @@
+//! `simd` offers a basic interface to the SIMD functionality of CPUs.
+//!
+//! # Installation
+//!
+//! Via git:
+//!
+//! ```toml
+//! simd = { git = "https://github.com/huonw/simd" }
+//! ```
+//!
+//! This is **not** currently the `simd` crate on crates.io.
+
 #![cfg_attr(feature = "serde", feature(plugin, custom_derive))]
 #![cfg_attr(feature = "serde", plugin(serde_macros))]
 
@@ -7,43 +19,52 @@
 #[cfg(feature = "serde")]
 extern crate serde;
 
+/// Boolean type for 8-bit integers.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone)]
 pub struct bool8i(i8);
+/// Boolean type for 16-bit integers.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone)]
 pub struct bool16i(i16);
+/// Boolean type for 32-bit integers.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone)]
 pub struct bool32i(i32);
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Copy, Clone)]
-pub struct bool64i(i64);
+/// Boolean type for 32-bit floats.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone)]
 pub struct bool32f(i32);
 
+/// Types that are SIMD vectors.
 pub unsafe trait Simd {
+    /// The corresponding boolean vector type.
     type Bool: Simd;
+    /// The element that this vector stores.
     type Elem;
 }
 
+/// A SIMD vector of 4 `u32`s.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct u32x4(u32, u32, u32, u32);
+/// A SIMD vector of 4 `i32`s.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct i32x4(i32, i32, i32, i32);
+/// A SIMD vector of 4 `f32`s.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct f32x4(f32, f32, f32, f32);
+/// A SIMD boolean vector for length-4 vectors of 32-bit integers.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct bool32ix4(i32, i32, i32, i32);
+/// A SIMD boolean vector for length-4 vectors of 32-bit floats.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
@@ -75,32 +96,38 @@ struct bool32ix2(i32, i32);
 #[derive(Debug, Copy)]
 struct bool32fx2(i32, i32);
 
+/// A SIMD vector of 8 `u16`s.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct u16x8(u16, u16, u16, u16,
                  u16, u16, u16, u16);
+/// A SIMD vector of 8 `i16`s.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct i16x8(i16, i16, i16, i16,
                  i16, i16, i16, i16);
+/// A SIMD boolean vector for length-8 vectors of 16-bit integers.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct bool16ix8(i16, i16, i16, i16,
                      i16, i16, i16, i16);
 
+/// A SIMD vector of 4 `u32`s.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct u8x16(u8, u8, u8, u8, u8, u8, u8, u8,
                  u8, u8, u8, u8, u8, u8, u8, u8);
+/// A SIMD vector of 4 `u32`s.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct i8x16(i8, i8, i8, i8, i8, i8, i8, i8,
                  i8, i8, i8, i8, i8, i8, i8, i8);
+/// A SIMD boolean vector for length-16 vectors of 8-bit integers.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]

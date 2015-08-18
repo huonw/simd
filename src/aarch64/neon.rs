@@ -32,6 +32,7 @@ impl F32x4 for f32x4 {
     }
 }
 
+#[doc(hidden)]
 pub mod common {
     use super::super::super::*;
     use super::*;

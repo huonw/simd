@@ -1,3 +1,5 @@
+//! Features specific to x86 and x86-64 CPUs.
+
 #[cfg(any(feature = "doc", target_feature = "sse2"))]
 pub mod sse2;
 #[cfg(any(feature = "doc", target_feature = "sse3"))]

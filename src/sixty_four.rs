@@ -13,25 +13,35 @@ use super::{
 };
 use std;
 
+/// Boolean type for 64-bit integers.
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Copy, Clone)]
+pub struct bool64i(i64);
+/// Boolean type for 64-bit floats.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone)]
 pub struct bool64f(i64);
+/// A SIMD vector of 2 `u64`s.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct u64x2(u64, u64);
+/// A SIMD vector of 2 `i64`s.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct i64x2(i64, i64);
+/// A SIMD vector of 2 `f64`s.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct f64x2(f64, f64);
+/// A SIMD boolean vector for length-2 vectors of 64-bit integers.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct bool64ix2(i64, i64);
+/// A SIMD boolean vector for length-2 vectors of 64-bit floats.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
@@ -67,40 +77,52 @@ mod common {
         x.0 != 0 || x.1 != 0
     }}
 bool_impls! {
-    bool64ix2: bool64i, i64x2, i64, 2, bool64ix2_all, bool64ix2_any, x0 | x1 [to_f -> bool64fx2];
-    bool64fx2: bool64f, i64x2, i64, 2, bool64fx2_all, bool64fx2_any, x0 | x1 [to_i -> bool64ix2];
+    bool64ix2: bool64i, i64x2, i64, 2, bool64ix2_all, bool64ix2_any, x0 | x1
+        [/// Convert `self` to a boolean vector for interacting with floating point vectors.
+         to_f -> bool64fx2];
+
+    bool64fx2: bool64f, i64x2, i64, 2, bool64fx2_all, bool64fx2_any, x0 | x1
+        [/// Convert `self` to a boolean vector for interacting with integer vectors.
+         to_i -> bool64ix2];
 }
 
 impl u64x2 {
+    /// Convert each lane to a signed integer.
     #[inline]
     pub fn to_i64(self) -> i64x2 {
         unsafe {simd_cast(self)}
     }
+    /// Convert each lane to a 64-bit float.
     #[inline]
     pub fn to_f64(self) -> f64x2 {
         unsafe {simd_cast(self)}
     }
 }
 impl i64x2 {
+    /// Convert each lane to an unsigned integer.
     #[inline]
     pub fn to_u64(self) -> u64x2 {
         unsafe {simd_cast(self)}
     }
+    /// Convert each lane to a 64-bit float.
     #[inline]
     pub fn to_f64(self) -> f64x2 {
         unsafe {simd_cast(self)}
     }
 }
 impl f64x2 {
+    /// Convert each lane to a signed integer.
     #[inline]
     pub fn to_i64(self) -> i64x2 {
         unsafe {simd_cast(self)}
     }
+    /// Convert each lane to an unsigned integer.
     #[inline]
     pub fn to_u64(self) -> u64x2 {
         unsafe {simd_cast(self)}
     }
 
+    /// Convert each lane to a 32-bit float.
     #[inline]
     pub fn to_f32(self) -> f32x4 {
         unsafe {

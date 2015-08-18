@@ -43,6 +43,7 @@ extern "platform-intrinsic" {
     fn x86_mm_subs_epu8(x: i8x16, y: i8x16) -> i8x16;
 }
 
+#[doc(hidden)]
 pub mod common {
     use super::super::super::*;
     use std::mem;
