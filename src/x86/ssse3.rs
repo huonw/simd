@@ -20,20 +20,23 @@ extern "platform-intrinsic" {
     fn x86_mm_sign_epi8(x: i8x16, y: i8x16) -> i8x16;
 }
 
-pub trait SSSE3Bytes {
-    fn shuf(self, indices: Self) -> Self;
+pub trait Ssse3I8x16 {
+    fn shuffle_bytes(self, indices: Self) -> Self;
+}
+pub trait Ssse3U8x16 {
+    fn shuffle_bytes(self, indices: Self) -> Self;
 }
 
-impl SSSE3Bytes for u8x16 {
+impl Ssse3U8x16 for u8x16 {
     #[inline]
-    fn shuf(self, indices: Self) -> Self {
+    fn shuffle_bytes(self, indices: Self) -> Self {
         unsafe {x86_mm_shuffle_epi8(self, indices)}
     }
 }
 
-impl SSSE3Bytes for i8x16 {
+impl Ssse3I8x16 for i8x16 {
     #[inline]
-    fn shuf(self, indices: Self) -> Self {
+    fn shuffle_bytes(self, indices: Self) -> Self {
         unsafe {
             bitcast(x86_mm_shuffle_epi8(bitcast(self),
                                         bitcast(indices)))

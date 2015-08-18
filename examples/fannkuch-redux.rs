@@ -26,7 +26,7 @@ fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
 #[inline(always)]
 fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
     use simd::x86::ssse3::*;
-    x.shuf(y)
+    x.shuffle_bytes(y)
 }
 
 struct State {
