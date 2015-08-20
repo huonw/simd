@@ -6,7 +6,14 @@ use simd::u8x16;
 use std::{env, process};
 
 cfg_if! {
-    if #[cfg(target_feature = "neon")] {
+    if #[cfg(target_arch = "aarch64")] {
+        #[inline(always)]
+        fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
+            use simd::aarch64::neon::*;
+            y.table_lookup_1(x)
+        }
+    } else if #[cfg(all(target_arch = "arm",
+                 target_feature = "neon"))] {
         #[inline(always)]
         fn shuffle(x: u8x16, y: u8x16) -> u8x16 {
             use simd::arm::neon::*;

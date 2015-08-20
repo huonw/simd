@@ -1,5 +1,5 @@
 use super::super::*;
-use {bitcast, simd_cast, f32x2};
+use {simd_cast, f32x2};
 
 pub use sixty_four::{f64x2, i64x2, u64x2, bool64ix2, bool64fx2};
 
@@ -18,6 +18,9 @@ extern "platform-intrinsic" {
     fn aarch64_vminvq_u8(x: u8x16) -> u8;
     fn aarch64_vminvq_u16(x: u16x8) -> u16;
     fn aarch64_vminvq_u32(x: u32x4) -> u32;
+
+    fn aarch64_vqtbl1q_u8(x: u8x16, y: u8x16) -> u8x16;
+    fn aarch64_vqtbl1q_s8(x: i8x16, y: i8x16) -> i8x16;
 }
 
 pub trait Aarch64F32x4 {
@@ -32,10 +35,28 @@ impl Aarch64F32x4 for f32x4 {
     }
 }
 
+pub trait Aarch64U8x16 {
+    fn table_lookup_1(self, t0: u8x16) -> u8x16;
+}
+impl Aarch64U8x16 for u8x16 {
+    #[inline]
+    fn table_lookup_1(self, t0: u8x16) -> u8x16 {
+        unsafe {aarch64_vqtbl1q_u8(t0, self)}
+    }
+}
+pub trait Aarch64I8x16 {
+    fn table_lookup_1(self, t0: i8x16) -> i8x16;
+}
+impl Aarch64I8x16 for i8x16 {
+    #[inline]
+    fn table_lookup_1(self, t0: i8x16) -> i8x16 {
+        unsafe {aarch64_vqtbl1q_s8(t0, self)}
+    }
+}
+
 #[doc(hidden)]
 pub mod common {
     use super::super::super::*;
-    use super::*;
     use std::mem;
 
     #[inline]
