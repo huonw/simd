@@ -5,7 +5,7 @@ extern crate simd;
 
 #[cfg(target_feature = "sse2")]
 use simd::x86::sse2::f64x2;
-#[cfg(target_platform = "aarch64")]
+#[cfg(target_arch = "aarch64")]
 use simd::aarch64::neon::f64x2;
 
 fn A(i: usize, j: usize) -> f64 {
