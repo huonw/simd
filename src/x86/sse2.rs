@@ -105,3 +105,19 @@ impl F32x4 for f32x4 {
         }
     }
 }
+
+pub trait Movemask {
+    fn movemask(self) -> i32;
+}
+
+impl Movemask for u8x16 {
+    fn movemask(self) -> i32 {
+        unsafe {x86_mm_movemask_epi8(self)}
+    }
+}
+
+impl Movemask for f32x4 {
+    fn movemask(self) -> i32 {
+        unsafe {x86_mm_movemask_ps(self)}
+    }
+}
