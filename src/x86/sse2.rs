@@ -72,11 +72,13 @@ pub mod common {
     macro_rules! bools {
         ($($ty: ty, $all: ident, $any: ident, $movemask: ident, $width: expr;)*) => {
             $(
+                #[inline]
                 pub fn $all(x: $ty) -> bool {
                     unsafe {
                         super::$movemask(mem::transmute(x)) == (1 << $width) - 1
                     }
                 }
+                #[inline]
                 pub fn $any(x: $ty) -> bool {
                     unsafe {
                         super::$movemask(mem::transmute(x)) != 0

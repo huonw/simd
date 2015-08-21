@@ -83,11 +83,13 @@ pub mod common {
     macro_rules! bools {
         ($($ty: ty, $all: ident ($min: ident), $any: ident ($max: ident);)*) => {
             $(
+                #[inline]
                 pub fn $all(x: $ty) -> bool {
                     unsafe {
                         super::$min(mem::transmute(x)) != 0
                     }
                 }
+                #[inline]
                 pub fn $any(x: $ty) -> bool {
                     unsafe {
                         super::$max(mem::transmute(x)) != 0

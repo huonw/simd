@@ -408,6 +408,7 @@ pub mod common {
     macro_rules! bools {
         ($($ty: ty, $half: ty, $all: ident ($min: ident), $any: ident ($max: ident);)*) => {
             $(
+                #[inline]
                 pub fn $all(x: $ty) -> bool {
                     unsafe {
                         let (lo, hi): ($half, $half) = mem::transmute(x);
@@ -416,6 +417,7 @@ pub mod common {
                         y.0 != 0
                     }
                 }
+                #[inline]
                 pub fn $any(x: $ty) -> bool {
                     unsafe {
                         let (lo, hi): ($half, $half) = mem::transmute(x);

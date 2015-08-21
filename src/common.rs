@@ -161,9 +161,11 @@ macro_rules! bool_impls {
         [$(#[$cvt_meta: meta] $cvt: ident -> $cvt_to: ident),*];
         )*) => {
         $(impl $name {
+            #[inline]
             fn to_repr(self) -> $repr {
                 unsafe {std::mem::transmute(self)}
             }
+            #[inline]
             fn from_repr(x: $repr) -> Self {
                 unsafe {std::mem::transmute(x)}
             }
