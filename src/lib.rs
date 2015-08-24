@@ -118,13 +118,13 @@ pub struct i16x8(i16, i16, i16, i16,
 pub struct bool16ix8(i16, i16, i16, i16,
                      i16, i16, i16, i16);
 
-/// A SIMD vector of 4 `u32`s.
+/// A SIMD vector of 16 `u8`s.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
 pub struct u8x16(u8, u8, u8, u8, u8, u8, u8, u8,
                  u8, u8, u8, u8, u8, u8, u8, u8);
-/// A SIMD vector of 4 `u32`s.
+/// A SIMD vector of 16 `i8`s.
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy)]
