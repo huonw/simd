@@ -1,5 +1,5 @@
 use super::super::*;
-use {simd_cast, f32x2};
+use {bitcast, simd_cast, f32x2};
 
 pub use sixty_four::{f64x2, i64x2, u64x2, bool64ix2, bool64fx2};
 
@@ -16,8 +16,9 @@ extern "platform-intrinsic" {
 
     fn x86_mm_min_ps(x: f32x4, y: f32x4) -> f32x4;
 
-    fn x86_mm_movemask_ps(x: f32x4) -> i32;
-    fn x86_mm_movemask_epi8(x: u8x16) -> i32;
+    fn x86_mm_movemask_ps(x: f32x4) -> u32;
+    fn x86_mm_movemask_pd(x: f64x2) -> u32;
+    fn x86_mm_movemask_epi8(x: u8x16) -> u32;
 
     fn x86_mm_adds_epi16(x: i16x8, y: i16x8) -> i16x8;
     fn x86_mm_adds_epi8(x: i8x16, y: i8x16) -> i8x16;
@@ -98,6 +99,7 @@ pub mod common {
 
 pub trait Sse2F32x4 {
     fn to_f64(self) -> f64x2;
+    fn move_mask(self) -> u32;
 }
 impl Sse2F32x4 for f32x4 {
     #[inline]
@@ -105,5 +107,63 @@ impl Sse2F32x4 for f32x4 {
         unsafe {
             simd_cast(f32x2(self.0, self.1))
         }
+    }
+    fn move_mask(self) -> u32 {
+        unsafe {x86_mm_movemask_ps(self)}
+    }
+}
+
+pub trait Sse2F64x2 {
+    fn move_mask(self) -> u32;
+}
+pub trait Sse2Bool32fx4 {
+    fn move_mask(self) -> u32;
+}
+pub trait Sse2Bool64fx2 {
+    fn move_mask(self) -> u32;
+}
+pub trait Sse2U8x16 {
+    fn move_mask(self) -> u32;
+}
+pub trait Sse2I8x16 {
+    fn move_mask(self) -> u32;
+}
+pub trait Sse2Bool8ix16 {
+    fn move_mask(self) -> u32;
+}
+impl Sse2F64x2 for f64x2 {
+    #[inline]
+    fn move_mask(self) -> u32 {
+        unsafe { x86_mm_movemask_pd(bitcast(self))}
+    }
+}
+impl Sse2Bool32fx4 for bool32fx4 {
+    #[inline]
+    fn move_mask(self) -> u32 {
+        unsafe { x86_mm_movemask_ps(bitcast(self))}
+    }
+}
+impl Sse2Bool64fx2 for bool64fx2 {
+    #[inline]
+    fn move_mask(self) -> u32 {
+        unsafe { x86_mm_movemask_pd(bitcast(self))}
+    }
+}
+impl Sse2U8x16 for u8x16 {
+    #[inline]
+    fn move_mask(self) -> u32 {
+        unsafe { x86_mm_movemask_epi8(self) }
+    }
+}
+impl Sse2I8x16 for i8x16 {
+    #[inline]
+    fn move_mask(self) -> u32 {
+        unsafe { x86_mm_movemask_epi8(bitcast(self)) }
+    }
+}
+impl Sse2I8x16 for bool8ix16 {
+    #[inline]
+    fn move_mask(self) -> u32 {
+        unsafe { x86_mm_movemask_epi8(bitcast(self)) }
     }
 }
