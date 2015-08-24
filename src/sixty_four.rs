@@ -206,6 +206,7 @@ macro_rules! shift_one {
         }
         impl std::ops::Shr<$by> for $ty {
             type Output = Self;
+            #[inline]
             fn shr(self, other: $by) -> Self {
                 unsafe {simd_shr(self, $ty::splat(other as <$ty as Simd>::Elem))}
             }
