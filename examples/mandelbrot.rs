@@ -6,9 +6,7 @@ use simd::{f32x4, u32x4};
 use std::io::prelude::*;
 
 #[inline(never)]
-fn mandelbrot_naive(c_x: f32,
-                    c_y: f32,
-                    max_iter: u32) -> u32 {
+fn mandelbrot_naive(c_x: f32, c_y: f32, max_iter: u32) -> u32 {
     let mut x = c_x;
     let mut y = c_y;
     let mut count = 0;
@@ -28,34 +26,26 @@ fn mandelbrot_naive(c_x: f32,
 }
 
 #[inline(never)]
-fn mandelbrot(c_x: f32x4,
-              c_y: f32x4,
-              max_iter: u32) -> u32x4 {
+fn mandelbrot_vector(c_x: f32x4, c_y: f32x4, max_iter: u32) -> u32x4 {
     let mut x = c_x;
     let mut y = c_y;
-    let four = f32x4::splat(4.0);
-    let mut count = u32x4::splat(0);
-    let one = u32x4::splat(1);
-    let zero = u32x4::splat(0);
-    let mut still_going = true;
 
-    let mut i = 0;
-    while i < max_iter && still_going {
+    let mut count = u32x4::splat(0);
+    for _ in 0..max_iter {
         let xy = x * y;
         let xx = x * x;
         let yy = y * y;
         let sum = xx + yy;
-        let mask = sum.lt(four);
-        still_going = mask.any();
-        count = count + mask.to_i().select(one, zero);
+        let mask = sum.lt(f32x4::splat(4.0));
+
+        if !mask.any() { break }
+        count = count + mask.to_i().select(u32x4::splat(1),
+                                           u32x4::splat(0));
 
         x = xx - yy + c_x;
         y = xy + xy + c_y;
-        i += 1;
     }
-
     count
-
 }
 
 const COLOURS: &'static [(f32, f32, f32)] = &[(0.0, 7.0, 100.0),
@@ -91,13 +81,15 @@ fn output_one(buf: &mut [u8], val: u32) {
 }
 
 fn main() {
-    let width = 128 * 20;
-    let height = 128 * 20;
+    let mut args = std::env::args();
+    args.next();
+    let width = args.next().unwrap().parse().unwrap();
+    let height = args.next().unwrap().parse().unwrap();
 
     let left = -2.2;
     let right = left + 3.0;
-    let top = 1.5;
-    let bottom = top - 3.0;
+    let top = 1.0;
+    let bottom = top - 2.0;
 
     let width_step: f32 = (right - left) / width as f32;
     let height_step: f32 = (bottom - top) / height as f32;
@@ -107,12 +99,12 @@ fn main() {
     println!("P6 {} {} 255", width, height);
     let mut line = vec![0; width * 3];
 
-    if std::env::args().len() == 1 {
+    if args.next().is_none() {
         for i in 0..height {
             let y = f32x4::splat(top + height_step * i as f32);
             for j in (0..width).step_by(4) {
                 let x = f32x4::splat(left + width_step * j as f32) + adjust;
-                let ret = mandelbrot(x, y, LIMIT);
+                let ret = mandelbrot_vector(x, y, LIMIT);
                 test::black_box(ret);
                 for k in 0..4 { let val = ret.extract(k as u32); output_one(&mut line[3*(j + k)..3*(j + k + 1)], val); }
             }
