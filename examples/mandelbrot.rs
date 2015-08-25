@@ -31,7 +31,7 @@ fn mandelbrot_vector(c_x: f32x4, c_y: f32x4, max_iter: u32) -> u32x4 {
     let mut y = c_y;
 
     let mut count = u32x4::splat(0);
-    for _ in 0..max_iter {
+    for _ in 0..max_iter as usize {
         let xy = x * y;
         let xx = x * x;
         let yy = y * y;
