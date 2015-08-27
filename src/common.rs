@@ -276,16 +276,16 @@ macro_rules! bool_impls {
 }
 
 bool_impls! {
-    bool32ix4: bool32i, i32x4, i32, 2, bool32ix4_all, bool32ix4_any, x0, x1 | x2, x3
+    bool32ix4: bool32i, i32x4, i32, 4, bool32ix4_all, bool32ix4_any, x0, x1 | x2, x3
         [/// Convert `self` to a boolean vector for interacting with floating point vectors.
          to_f -> bool32fx4];
-    bool32fx4: bool32f, i32x4, i32, 2, bool32fx4_all, bool32fx4_any, x0, x1 | x2, x3
+    bool32fx4: bool32f, i32x4, i32, 4, bool32fx4_all, bool32fx4_any, x0, x1 | x2, x3
         [/// Convert `self` to a boolean vector for interacting with integer vectors.
          to_i -> bool32ix4];
 
-    bool16ix8: bool16i, i16x8, i16, 2, bool16ix8_all, bool16ix8_any, x0, x1, x2, x3 | x4, x5, x6, x7 [];
+    bool16ix8: bool16i, i16x8, i16, 8, bool16ix8_all, bool16ix8_any, x0, x1, x2, x3 | x4, x5, x6, x7 [];
 
-    bool8ix16: bool8i, i8x16, i8, 2, bool8ix16_all, bool8ix16_any, x0, x1, x2, x3, x4, x5, x6, x7 | x8, x9, x10, x11, x12, x13, x14, x15 [];
+    bool8ix16: bool8i, i8x16, i8, 16, bool8ix16_all, bool8ix16_any, x0, x1, x2, x3, x4, x5, x6, x7 | x8, x9, x10, x11, x12, x13, x14, x15 [];
 }
 
 impl u32x4 {
