@@ -201,7 +201,7 @@ struct Unalign<T>(T);
 #[macro_use]
 mod common;
 mod sixty_four;
-
+mod v256;
 
 #[cfg(any(feature = "doc",
           target_arch = "x86",
