@@ -207,7 +207,7 @@ impl Sse2I8x16 for i8x16 {
 pub trait Sse2Bool8ix16 {
     fn move_mask(self) -> u32;
 }
-impl Sse2I8x16 for bool8ix16 {
+impl Sse2Bool8ix16 for bool8ix16 {
     #[inline]
     fn move_mask(self) -> u32 {
         unsafe { x86_mm_movemask_epi8(bitcast(self)) as u32}
