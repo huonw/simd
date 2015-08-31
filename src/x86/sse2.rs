@@ -131,11 +131,28 @@ impl Sse2Bool32fx4 for bool32fx4 {
 
 pub trait Sse2F64x2 {
     fn move_mask(self) -> u32;
+    fn sqrt(self) -> Self;
+    fn max(self, other: Self) -> Self;
+    fn min(self, other: Self) -> Self;
 }
 impl Sse2F64x2 for f64x2 {
     #[inline]
     fn move_mask(self) -> u32 {
         unsafe { x86_mm_movemask_pd(bitcast(self)) as u32}
+    }
+
+    #[inline]
+    fn sqrt(self) -> Self {
+        unsafe { x86_mm_sqrt_pd(self) }
+    }
+
+    #[inline]
+    fn max(self, other: Self) -> Self {
+        unsafe { x86_mm_max_pd(self, other) }
+    }
+    #[inline]
+    fn min(self, other: Self) -> Self {
+        unsafe { x86_mm_min_pd(self, other) }
     }
 }
 
@@ -162,22 +179,109 @@ impl Sse2Bool64ix2 for bool64ix2 {}
 
 // 32 bit ints
 
-pub trait Sse2U32x4 {}
-impl Sse2U32x4 for u32x4 {}
+pub trait Sse2U32x4 {
+    fn low_mul(self, other: Self) -> u64x2;
+}
+impl Sse2U32x4 for u32x4 {
+    #[inline]
+    fn low_mul(self, other: Self) -> u64x2 {
+        unimplemented!()
+        //unsafe { x86_mm_mul_epu32(self, other) }
+    }
+}
 
-pub trait Sse2I32x4 {}
-impl Sse2I32x4 for i32x4 {}
+pub trait Sse2I32x4 {
+    fn packs(self, other: Self) -> i16x8;
+}
+impl Sse2I32x4 for i32x4 {
+    #[inline]
+    fn packs(self, other: Self) -> i16x8 {
+        unsafe { x86_mm_packs_epi32(self, other) }
+    }
+}
 
 pub trait Sse2Bool32ix4 {}
 impl Sse2Bool32ix4 for bool32ix4 {}
 
 // 16 bit ints
 
-pub trait Sse2U16x8 {}
-impl Sse2U16x8 for u16x8 {}
+pub trait Sse2U16x8 {
+    fn adds(self, other: Self) -> Self;
+    fn subs(self, other: Self) -> Self;
+    fn avg(self, other: Self) -> Self;
+    fn mulhi(self, other: Self) -> Self;
+}
+impl Sse2U16x8 for u16x8 {
+    #[inline]
+    fn adds(self, other: Self) -> Self {
+        unsafe { x86_mm_adds_epu16(self, other) }
+    }
+    #[inline]
+    fn subs(self, other: Self) -> Self {
+        unsafe { x86_mm_subs_epu16(self, other) }
+    }
 
-pub trait Sse2I16x8 {}
-impl Sse2I16x8 for i16x8 {}
+    #[inline]
+    fn avg(self, other: Self) -> Self {
+        unsafe { x86_mm_avg_epu16(self, other) }
+    }
+
+    #[inline]
+    fn mulhi(self, other: Self) -> Self {
+        unsafe { x86_mm_mulhi_epu16(self, other) }
+    }
+}
+
+pub trait Sse2I16x8 {
+    fn adds(self, other: Self) -> Self;
+    fn subs(self, other: Self) -> Self;
+    fn madd(self, other: Self) -> i32x4;
+    fn max(self, other: Self) -> Self;
+    fn min(self, other: Self) -> Self;
+    fn mulhi(self, other: Self) -> Self;
+    fn packs(self, other: Self) -> i8x16;
+    fn packus(self, other: Self) -> u8x16;
+}
+impl Sse2I16x8 for i16x8 {
+    #[inline]
+    fn adds(self, other: Self) -> Self {
+        unsafe { x86_mm_adds_epi16(self, other) }
+    }
+    #[inline]
+    fn subs(self, other: Self) -> Self {
+        unsafe { x86_mm_subs_epi16(self, other) }
+    }
+
+    #[inline]
+    fn madd(self, other: Self) -> i32x4 {
+        unimplemented!()
+        //unsafe { x86_mm_madd_epi16(self, other) }
+    }
+
+    #[inline]
+    fn max(self, other: Self) -> Self {
+        unsafe { x86_mm_max_epi16(self, other) }
+    }
+    #[inline]
+    fn min(self, other: Self) -> Self {
+        unsafe { x86_mm_min_epi16(self, other) }
+    }
+
+    #[inline]
+    fn mulhi(self, other: Self) -> Self {
+        unimplemented!()
+        //unsafe { x86_mm_mulhi_epi16(self, other) }
+    }
+
+    #[inline]
+    fn packs(self, other: Self) -> i8x16 {
+        unsafe { x86_mm_packs_epi16(self, other) }
+    }
+    #[inline]
+    fn packus(self, other: Self) -> u8x16 {
+        unsafe { x86_mm_packus_epi16(self, other) }
+    }
+}
 
 pub trait Sse2Bool16ix8 {}
 impl Sse2Bool16ix8 for bool16ix8 {}
@@ -186,21 +290,66 @@ impl Sse2Bool16ix8 for bool16ix8 {}
 
 pub trait Sse2U8x16 {
     fn move_mask(self) -> u32;
+    fn adds(self, other: Self) -> Self;
+    fn subs(self, other: Self) -> Self;
+    fn avg(self, other: Self) -> Self;
+    fn max(self, other: Self) -> Self;
+    fn min(self, other: Self) -> Self;
+    fn sad(self, other: Self) -> u64x2;
 }
 impl Sse2U8x16 for u8x16 {
     #[inline]
     fn move_mask(self) -> u32 {
         unsafe { x86_mm_movemask_epi8(bitcast(self)) as u32}
     }
+
+    #[inline]
+    fn adds(self, other: Self) -> Self {
+        unsafe { x86_mm_adds_epu8(self, other) }
+    }
+    #[inline]
+    fn subs(self, other: Self) -> Self {
+        unsafe { x86_mm_subs_epu8(self, other) }
+    }
+
+    #[inline]
+    fn avg(self, other: Self) -> Self {
+        unsafe { x86_mm_avg_epu8(self, other) }
+    }
+
+    #[inline]
+    fn max(self, other: Self) -> Self {
+        unsafe { x86_mm_max_epu8(self, other) }
+    }
+    #[inline]
+    fn min(self, other: Self) -> Self {
+        unsafe { x86_mm_min_epu8(self, other) }
+    }
+
+    #[inline]
+    fn sad(self, other: Self) -> u64x2 {
+        unsafe { x86_mm_sad_epu8(self, other) }
+    }
 }
 
 pub trait Sse2I8x16 {
     fn move_mask(self) -> u32;
+    fn adds(self, other: Self) -> Self;
+    fn subs(self, other: Self) -> Self;
 }
 impl Sse2I8x16 for i8x16 {
     #[inline]
     fn move_mask(self) -> u32 {
         unsafe { x86_mm_movemask_epi8(bitcast(self)) as u32}
+    }
+
+    #[inline]
+    fn adds(self, other: Self) -> Self {
+        unsafe { x86_mm_adds_epi8(self, other) }
+    }
+    #[inline]
+    fn subs(self, other: Self) -> Self {
+        unsafe { x86_mm_subs_epi8(self, other) }
     }
 }
 
