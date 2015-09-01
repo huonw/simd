@@ -18,7 +18,7 @@ extern "platform-intrinsic" {
     fn x86_mm_mul_epi32(x: i32x4, y: i32x4) -> i64x2;
     fn x86_mm_packus_epi32(x: i32x4, y: i32x4) -> u16x8;
     fn x86_mm_testc_si128(x: u64x2, y: u64x2) -> i32;
-    fn x86_mm_testncz_si128(x: u64x2, y: u64x2) -> i32;
+    fn x86_mm_testnzc_si128(x: u64x2, y: u64x2) -> i32;
     fn x86_mm_testz_si128(x: u64x2, y: u64x2) -> i32;
 }
 
@@ -46,8 +46,7 @@ impl Sse41U64x2 for u64x2 {
     }
     #[inline]
     fn testnzc(self, other: Self) -> i32 {
-        unimplemented!()
-        // unsafe { x86_mm_testnzc_si128(self, other) }
+        unsafe { x86_mm_testnzc_si128(self, other) }
     }
     #[inline]
     fn testz(self, other: Self) -> i32 {
@@ -77,14 +76,24 @@ impl Sse41U32x4 for u32x4 {
     }
 }
 pub trait Sse41I32x4 {
+    fn max(self, other: Self) -> Self;
+    fn min(self, other: Self) -> Self;
     fn low_mul(self, other: Self) -> i64x2;
     fn packus(self, other: Self) -> u16x8;
 }
 impl Sse41I32x4 for i32x4 {
     #[inline]
+    fn max(self, other: Self) -> Self {
+        unsafe { x86_mm_max_epi32(self, other) }
+    }
+    #[inline]
+    fn min(self, other: Self) -> Self {
+        unsafe { x86_mm_min_epi32(self, other) }
+    }
+
+    #[inline]
     fn low_mul(self, other: Self) -> i64x2 {
-        unimplemented!()
-        //unsafe { x86_mm_mul_epi32(self, other) }
+        unsafe { x86_mm_mul_epi32(self, other) }
     }
     #[inline]
     fn packus(self, other: Self) -> u16x8 {

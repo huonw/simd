@@ -7,7 +7,6 @@ macro_rules! bitcast {
     }
 }
 
-#[allow(dead_code)]
 extern "platform-intrinsic" {
     fn x86_mm_abs_epi8(x: i8x16) -> i8x16;
     fn x86_mm_abs_epi16(x: i16x8) -> i16x8;
@@ -18,12 +17,12 @@ extern "platform-intrinsic" {
     fn x86_mm_hsub_epi16(x: i16x8, y: i16x8) -> i16x8;
     fn x86_mm_hsub_epi32(x: i32x4, y: i32x4) -> i32x4;
     fn x86_mm_hsubs_epi16(x: i16x8, y: i16x8) -> i16x8;
-    fn x86_mm_maddubs_epi16(x: i8x16, y: i8x16) -> i16x8;
+    fn x86_mm_maddubs_epi16(x: u8x16, y: i8x16) -> i16x8;
     fn x86_mm_mulhrs_epi16(x: i16x8, y: i16x8) -> i16x8;
     fn x86_mm_shuffle_epi8(x: i8x16, y: i8x16) -> i8x16;
     fn x86_mm_sign_epi8(x: i8x16, y: i8x16) -> i8x16;
     fn x86_mm_sign_epi16(x: i16x8, y: i16x8) -> i16x8;
-    // fn x86_mm_sign_epi32(x: i32x4, y: i32x4) -> i32x4;
+    fn x86_mm_sign_epi32(x: i32x4, y: i32x4) -> i32x4;
 }
 
 // 32 bit integers
@@ -37,8 +36,7 @@ pub trait Ssse3I32x4 {
 impl Ssse3I32x4 for i32x4 {
     #[inline]
     fn abs(self) -> Self {
-        unimplemented!()
-        //unsafe { x86_mm_abs_epi32(self) }
+        unsafe { x86_mm_abs_epi32(self) }
     }
 
     #[inline]
@@ -52,8 +50,7 @@ impl Ssse3I32x4 for i32x4 {
 
     #[inline]
     fn sign(self, other: Self) -> Self {
-        unimplemented!();
-        // unsafe { x86_mm_sign_epi32(self, other) }
+        unsafe { x86_mm_sign_epi32(self, other) }
     }
 }
 
@@ -79,14 +76,14 @@ pub trait Ssse3I16x8 {
     fn hadd(self, other: Self) -> Self;
     fn hadds(self, other: Self) -> Self;
     fn hsub(self, other: Self) -> Self;
+    fn hsubs(self, other: Self) -> Self;
     fn sign(self, other: Self) -> Self;
     fn mulhrs(self, other: Self) -> Self;
 }
 impl Ssse3I16x8 for i16x8 {
     #[inline]
     fn abs(self) -> Self {
-        unimplemented!()
-        //unsafe { x86_mm_abs_epi16(self) }
+        unsafe { x86_mm_abs_epi16(self) }
     }
 
     #[inline]
@@ -100,6 +97,10 @@ impl Ssse3I16x8 for i16x8 {
     #[inline]
     fn hsub(self, other: Self) -> Self {
         unsafe { x86_mm_hsub_epi16(self, other) }
+    }
+    #[inline]
+    fn hsubs(self, other: Self) -> Self {
+        unsafe { x86_mm_hsubs_epi16(self, other) }
     }
 
     #[inline]
@@ -133,7 +134,7 @@ impl Ssse3U16x8 for u16x8 {
 
 pub trait Ssse3U8x16 {
     fn shuffle_bytes(self, indices: Self) -> Self;
-    fn maddubs(self, other: i8x16) -> Self;
+    fn maddubs(self, other: i8x16) -> i16x8;
 }
 
 impl Ssse3U8x16 for u8x16 {
@@ -142,9 +143,8 @@ impl Ssse3U8x16 for u8x16 {
         unsafe {bitcast!(x86_mm_shuffle_epi8(self, indices))}
     }
 
-    fn maddubs(self, other: i8x16) -> Self {
-        unimplemented!()
-        // unsafe { x86_mm_maddubs(self, other) }
+    fn maddubs(self, other: i8x16) -> i16x8 {
+        unsafe { x86_mm_maddubs_epi16(self, other) }
     }
 }
 
@@ -156,8 +156,7 @@ pub trait Ssse3I8x16 {
 impl Ssse3I8x16 for i8x16 {
     #[inline]
     fn abs(self) -> Self {
-        unimplemented!()
-        // unsafe {x86_mm_abs_epi8(self)}
+        unsafe {x86_mm_abs_epi8(self)}
     }
     #[inline]
     fn shuffle_bytes(self, indices: Self) -> Self {

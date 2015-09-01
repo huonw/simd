@@ -6,7 +6,6 @@ pub use sixty_four::{f64x2, i64x2, u64x2, bool64ix2, bool64fx2};
 //pub use super::{u64x2, i64x2, f64x2, bool64ix2, bool64fx2};
 
 // strictly speaking, these are SSE instructions, not SSE2.
-#[allow(dead_code)]
 extern "platform-intrinsic" {
     fn x86_mm_movemask_ps(x: f32x4) -> i32;
     fn x86_mm_max_ps(x: f32x4, y: f32x4) -> f32x4;
@@ -16,7 +15,6 @@ extern "platform-intrinsic" {
     fn x86_mm_sqrt_ps(x: f32x4) -> f32x4;
 }
 
-#[allow(dead_code)]
 extern "platform-intrinsic" {
     fn x86_mm_adds_epi8(x: i8x16, y: i8x16) -> i8x16;
     fn x86_mm_adds_epu8(x: u8x16, y: u8x16) -> u8x16;
@@ -24,7 +22,7 @@ extern "platform-intrinsic" {
     fn x86_mm_adds_epu16(x: u16x8, y: u16x8) -> u16x8;
     fn x86_mm_avg_epu8(x: u8x16, y: u8x16) -> u8x16;
     fn x86_mm_avg_epu16(x: u16x8, y: u16x8) -> u16x8;
-    fn x86_mm_madd_epi16(x: i16x8, y: i16x8) -> i16x8;
+    fn x86_mm_madd_epi16(x: i16x8, y: i16x8) -> i32x4;
     fn x86_mm_max_epi16(x: i16x8, y: i16x8) -> i16x8;
     fn x86_mm_max_epu8(x: u8x16, y: u8x16) -> u8x16;
     fn x86_mm_max_pd(x: f64x2, y: f64x2) -> f64x2;
@@ -33,8 +31,8 @@ extern "platform-intrinsic" {
     fn x86_mm_min_pd(x: f64x2, y: f64x2) -> f64x2;
     fn x86_mm_movemask_pd(x: f64x2) -> i32;
     fn x86_mm_movemask_epi8(x: i8x16) -> i32;
-    fn x86_mm_mul_epu32(x: i32x4, y: i32x4) -> i64x2;
-    fn x86_mm_mulhi_eps16(x: i16x8, y: i16x8) -> i16x8;
+    fn x86_mm_mul_epu32(x: u32x4, y: u32x4) -> u64x2;
+    fn x86_mm_mulhi_epi16(x: i16x8, y: i16x8) -> i16x8;
     fn x86_mm_mulhi_epu16(x: u16x8, y: u16x8) -> u16x8;
     fn x86_mm_packs_epi16(x: i16x8, y: i16x8) -> i8x16;
     fn x86_mm_packs_epi32(x: i32x4, y: i32x4) -> i16x8;
@@ -185,8 +183,7 @@ pub trait Sse2U32x4 {
 impl Sse2U32x4 for u32x4 {
     #[inline]
     fn low_mul(self, other: Self) -> u64x2 {
-        unimplemented!()
-        //unsafe { x86_mm_mul_epu32(self, other) }
+        unsafe { x86_mm_mul_epu32(self, other) }
     }
 }
 
@@ -254,8 +251,7 @@ impl Sse2I16x8 for i16x8 {
 
     #[inline]
     fn madd(self, other: Self) -> i32x4 {
-        unimplemented!()
-        //unsafe { x86_mm_madd_epi16(self, other) }
+        unsafe { x86_mm_madd_epi16(self, other) }
     }
 
     #[inline]
@@ -269,8 +265,7 @@ impl Sse2I16x8 for i16x8 {
 
     #[inline]
     fn mulhi(self, other: Self) -> Self {
-        unimplemented!()
-        //unsafe { x86_mm_mulhi_epi16(self, other) }
+        unsafe { x86_mm_mulhi_epi16(self, other) }
     }
 
     #[inline]
