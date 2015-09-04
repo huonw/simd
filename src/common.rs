@@ -27,16 +27,15 @@ macro_rules! basic_impls {
         $(impl $name {
             /// Create a new instance.
             #[inline]
-            pub fn new($($first: $elem),*, $($last: $elem),*) -> $name {
+            pub const fn new($($first: $elem),*, $($last: $elem),*) -> $name {
                 $name($($first),*, $($last),*)
             }
 
             /// Create a new instance where every lane has value `x`.
-            #[allow(unused_variables)]
             #[inline]
-            pub fn splat(x: $elem) -> $name {
-                $name($({ let $first = ();  x}),*,
-                      $({ let $last = ();  x}),*)
+            pub const fn splat(x: $elem) -> $name {
+                $name($({ #[allow(dead_code)] struct $first; x }),*,
+                      $({ #[allow(dead_code)] struct $last; x }),*)
             }
 
             /// Compare for equality.

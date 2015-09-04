@@ -16,7 +16,7 @@
 #![cfg_attr(feature = "serde", feature(plugin, custom_derive))]
 #![cfg_attr(feature = "serde", plugin(serde_macros))]
 
-#![feature(cfg_target_feature, repr_simd, platform_intrinsics)]
+#![feature(cfg_target_feature, repr_simd, platform_intrinsics, const_fn)]
 #![allow(non_camel_case_types)]
 
 #[cfg(feature = "serde")]
