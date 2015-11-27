@@ -9,7 +9,6 @@ use super::{
 
     Unalign, bitcast,
 };
-use std;
 
 #[cfg(any(target_arch = "x86",
           target_arch = "x86_64"))]
