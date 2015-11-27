@@ -11,7 +11,6 @@ use super::{
 
     Unalign, bitcast,
 };
-use std;
 
 /// Boolean type for 64-bit integers.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
