@@ -11,6 +11,8 @@ use super::{
 
     Unalign, bitcast,
 };
+use std::mem;
+use std::ops::{Not, Neg, Add, Sub, Mul, Div, BitAnd, BitOr, BitXor, Shl, Shr};
 
 /// Boolean type for 64-bit integers.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -141,7 +143,7 @@ neg_impls! {
 }
 macro_rules! not_impls {
     ($($ty: ident,)*) => {
-        $(impl std::ops::Not for $ty {
+        $(impl Not for $ty {
             type Output = Self;
             fn not(self) -> Self {
                 $ty::splat(!0) ^ self
@@ -157,7 +159,7 @@ not_impls! {
 macro_rules! operators {
     ($($trayt: ident ($func: ident, $method: ident): $($ty: ty),*;)*) => {
         $(
-            $(impl std::ops::$trayt for $ty {
+            $(impl $trayt for $ty {
                 type Output = Self;
                 #[inline]
                 fn $method(self, x: Self) -> Self {
@@ -193,17 +195,16 @@ operators! {
         bool64fx2;
 }
 
-macro_rules! shift_one {
-    ($ty: ident, $($by: ident),*) => {
+macro_rules! shift_one { ($ty: ident, $($by: ident),*) => {
         $(
-        impl std::ops::Shl<$by> for $ty {
+        impl Shl<$by> for $ty {
             type Output = Self;
             #[inline]
             fn shl(self, other: $by) -> Self {
                 unsafe { simd_shl(self, $ty::splat(other as <$ty as Simd>::Elem)) }
             }
         }
-        impl std::ops::Shr<$by> for $ty {
+        impl Shr<$by> for $ty {
             type Output = Self;
             #[inline]
             fn shr(self, other: $by) -> Self {
