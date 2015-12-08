@@ -10,7 +10,7 @@ use super::{
     Unalign, bitcast,
 };
 use std::mem;
-use std::ops::{Not, Neg, Add, Sub, Mul, Div, BitAnd, BitOr, BitXor, Shl, Shr};
+use std::ops;
 
 #[cfg(any(target_arch = "x86",
           target_arch = "x86_64"))]
@@ -263,7 +263,7 @@ macro_rules! bool_impls {
                 }
                 )*
         }
-          impl Not for $name {
+          impl ops::Not for $name {
               type Output = Self;
 
               #[inline]
@@ -407,7 +407,7 @@ impl u8x16 {
 
 macro_rules! neg_impls {
     ($zero: expr, $($ty: ident,)*) => {
-        $(impl Neg for $ty {
+        $(impl ops::Neg for $ty {
             type Output = Self;
             fn neg(self) -> Self {
                 $ty::splat($zero) - self
@@ -427,7 +427,7 @@ neg_impls! {
 }
 macro_rules! not_impls {
     ($($ty: ident,)*) => {
-        $(impl Not for $ty {
+        $(impl ops::Not for $ty {
             type Output = Self;
             fn not(self) -> Self {
                 $ty::splat(!0) ^ self
@@ -447,7 +447,7 @@ not_impls! {
 macro_rules! operators {
     ($($trayt: ident ($func: ident, $method: ident): $($ty: ty),*;)*) => {
         $(
-            $(impl $trayt for $ty {
+            $(impl ops::$trayt for $ty {
                 type Output = Self;
                 #[inline]
                 fn $method(self, x: Self) -> Self {
@@ -486,14 +486,14 @@ operators! {
 macro_rules! shift_one {
     ($ty: ident, $($by: ident),*) => {
         $(
-        impl Shl<$by> for $ty {
+        impl ops::Shl<$by> for $ty {
             type Output = Self;
             #[inline]
             fn shl(self, other: $by) -> Self {
                 unsafe { simd_shl(self, $ty::splat(other as <$ty as Simd>::Elem)) }
             }
         }
-        impl Shr<$by> for $ty {
+        impl ops::Shr<$by> for $ty {
             type Output = Self;
             #[inline]
             fn shr(self, other: $by) -> Self {
