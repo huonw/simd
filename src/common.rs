@@ -9,6 +9,8 @@ use super::{
 
     Unalign, bitcast,
 };
+use std::mem;
+use std::ops;
 
 #[cfg(any(target_arch = "x86",
           target_arch = "x86_64"))]
@@ -161,11 +163,11 @@ macro_rules! bool_impls {
         $(impl $name {
             #[inline]
             fn to_repr(self) -> $repr {
-                unsafe {std::mem::transmute(self)}
+                unsafe {mem::transmute(self)}
             }
             #[inline]
             fn from_repr(x: $repr) -> Self {
-                unsafe {std::mem::transmute(x)}
+                unsafe {mem::transmute(x)}
             }
 
             /// Create a new instance.
@@ -261,7 +263,7 @@ macro_rules! bool_impls {
                 }
                 )*
         }
-          impl std::ops::Not for $name {
+          impl ops::Not for $name {
               type Output = Self;
 
               #[inline]
@@ -405,7 +407,7 @@ impl u8x16 {
 
 macro_rules! neg_impls {
     ($zero: expr, $($ty: ident,)*) => {
-        $(impl std::ops::Neg for $ty {
+        $(impl ops::Neg for $ty {
             type Output = Self;
             fn neg(self) -> Self {
                 $ty::splat($zero) - self
@@ -425,7 +427,7 @@ neg_impls! {
 }
 macro_rules! not_impls {
     ($($ty: ident,)*) => {
-        $(impl std::ops::Not for $ty {
+        $(impl ops::Not for $ty {
             type Output = Self;
             fn not(self) -> Self {
                 $ty::splat(!0) ^ self
@@ -445,7 +447,7 @@ not_impls! {
 macro_rules! operators {
     ($($trayt: ident ($func: ident, $method: ident): $($ty: ty),*;)*) => {
         $(
-            $(impl std::ops::$trayt for $ty {
+            $(impl ops::$trayt for $ty {
                 type Output = Self;
                 #[inline]
                 fn $method(self, x: Self) -> Self {
@@ -484,14 +486,14 @@ operators! {
 macro_rules! shift_one {
     ($ty: ident, $($by: ident),*) => {
         $(
-        impl std::ops::Shl<$by> for $ty {
+        impl ops::Shl<$by> for $ty {
             type Output = Self;
             #[inline]
             fn shl(self, other: $by) -> Self {
                 unsafe { simd_shl(self, $ty::splat(other as <$ty as Simd>::Elem)) }
             }
         }
-        impl std::ops::Shr<$by> for $ty {
+        impl ops::Shr<$by> for $ty {
             type Output = Self;
             #[inline]
             fn shr(self, other: $by) -> Self {
