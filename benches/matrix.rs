@@ -5,6 +5,7 @@ extern crate simd;
 use test::black_box as bb;
 use test::Bencher as B;
 use simd::f32x4;
+use simd::x86::avx::f64x4;
 
 
 #[bench]
@@ -37,7 +38,7 @@ fn multiply_naive(b: &mut B) {
 }
 
 #[bench]
-fn multiply_simd4(b: &mut B) {
+fn multiply_simd4_32(b: &mut B) {
     let x = [f32x4::splat(1.0_f32); 4];
     let y = [f32x4::splat(2.0); 4];
     b.iter(|| {
@@ -64,6 +65,39 @@ fn multiply_simd4(b: &mut B) {
              f32x4::splat(y3.extract(1)) * x[1] +
              f32x4::splat(y3.extract(2)) * x[2] +
              f32x4::splat(y3.extract(3)) * x[3],
+             ]);
+        }
+    })
+}
+
+#[bench]
+fn multiply_simd4_64(b: &mut B) {
+    let x = [f64x4::splat(1.0_f64); 4];
+    let y = [f64x4::splat(2.0); 4];
+    b.iter(|| {
+        for _ in 0..100 {
+        let (x, y) = bb((&x, &y));
+
+        let y0 = y[0];
+        let y1 = y[1];
+        let y2 = y[2];
+        let y3 = y[3];
+        bb(&[f64x4::splat(y0.extract(0)) * x[0] +
+             f64x4::splat(y0.extract(1)) * x[1] +
+             f64x4::splat(y0.extract(2)) * x[2] +
+             f64x4::splat(y0.extract(3)) * x[3],
+             f64x4::splat(y1.extract(0)) * x[0] +
+             f64x4::splat(y1.extract(1)) * x[1] +
+             f64x4::splat(y1.extract(2)) * x[2] +
+             f64x4::splat(y1.extract(3)) * x[3],
+             f64x4::splat(y2.extract(0)) * x[0] +
+             f64x4::splat(y2.extract(1)) * x[1] +
+             f64x4::splat(y2.extract(2)) * x[2] +
+             f64x4::splat(y2.extract(3)) * x[3],
+             f64x4::splat(y3.extract(0)) * x[0] +
+             f64x4::splat(y3.extract(1)) * x[1] +
+             f64x4::splat(y3.extract(2)) * x[2] +
+             f64x4::splat(y3.extract(3)) * x[3],
              ]);
         }
     })

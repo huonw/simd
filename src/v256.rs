@@ -1,3 +1,17 @@
+use std::ops;
+#[allow(unused_imports)]
+use super::{
+	Simd,
+    f32x2,
+    simd_eq, simd_ne, simd_lt, simd_le, simd_gt, simd_ge,
+    simd_shuffle2, simd_shuffle4, simd_shuffle8, simd_shuffle16,
+    simd_insert, simd_extract,
+    simd_cast,
+    simd_add, simd_sub, simd_mul, simd_div, simd_shl, simd_shr, simd_and, simd_or, simd_xor,
+
+    Unalign, bitcast,
+};
+use super::sixty_four::*;
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Copy, Clone)]
@@ -8,7 +22,7 @@ pub struct u64x4(u64, u64, u64, u64);
 pub struct i64x4(i64, i64, i64, i64);
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy)]
 pub struct f64x4(f64, f64, f64, f64);
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -16,7 +30,7 @@ pub struct f64x4(f64, f64, f64, f64);
 pub struct bool64ix4(i64, i64, i64, i64);
 #[repr(simd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy)]
 pub struct bool64fx4(i64, i64, i64, i64);
 
 #[repr(simd)]
@@ -81,3 +95,20 @@ pub struct bool8ix32(i8, i8, i8, i8, i8, i8, i8, i8,
                      i8, i8, i8, i8, i8, i8, i8, i8,
                      i8, i8, i8, i8, i8, i8, i8, i8,
                      i8, i8, i8, i8, i8, i8, i8, i8);
+					 
+operators! {
+    Add (simd_add, add):
+        f64x4;
+    Sub (simd_sub, sub):
+        f64x4;
+    Mul (simd_mul, mul):
+        f64x4;
+    Div (simd_div, div): f64x4;
+}
+
+simd! {
+    bool64fx4: f64x4 = f64, bool64fx4 = bool64f;
+}
+basic_impls! {
+    f64x4: f64, bool64fx4, simd_shuffle4, 4, x0, x1 | x2, x3;
+}
