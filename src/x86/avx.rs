@@ -61,6 +61,29 @@ impl AvxF32x4 for f32x4 {
     }
 }
 
+pub trait Sse3F64x4 {
+    fn addsub(self, other: Self) -> Self;
+    fn hadd(self, other: Self) -> Self;
+    fn hsub(self, other: Self) -> Self;
+}
+
+impl Sse3F64x4 for f64x4 {
+    #[inline]
+    fn addsub(self, other: Self) -> Self {
+        unsafe { x86_mm256_addsub_pd(self, other) }
+    }
+
+    #[inline]
+    fn hadd(self, other: Self) -> Self {
+        unsafe { x86_mm256_hadd_pd(self, other) }
+    }
+
+    #[inline]
+    fn hsub(self, other: Self) -> Self {
+        unsafe { x86_mm256_hsub_pd(self, other) }
+    }
+}
+
 pub trait AvxBool32fx4 {}
 impl AvxBool32fx4 for bool32fx4 {}
 
