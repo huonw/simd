@@ -61,13 +61,26 @@ impl AvxF32x4 for f32x4 {
     }
 }
 
-pub trait Sse3F64x4 {
+pub trait AvxF64x4 {
+    fn sqrt(self) -> Self;
     fn addsub(self, other: Self) -> Self;
     fn hadd(self, other: Self) -> Self;
     fn hsub(self, other: Self) -> Self;
 }
 
-impl Sse3F64x4 for f64x4 {
+pub trait AvxF32x8 {
+    fn sqrt(self) -> Self;
+    fn addsub(self, other: Self) -> Self;
+    fn hadd(self, other: Self) -> Self;
+    fn hsub(self, other: Self) -> Self;
+}
+
+impl AvxF64x4 for f64x4 {
+    #[inline]
+    fn sqrt(self) -> Self {
+        unsafe { x86_mm256_sqrt_pd(self) }
+    }
+
     #[inline]
     fn addsub(self, other: Self) -> Self {
         unsafe { x86_mm256_addsub_pd(self, other) }
@@ -81,6 +94,28 @@ impl Sse3F64x4 for f64x4 {
     #[inline]
     fn hsub(self, other: Self) -> Self {
         unsafe { x86_mm256_hsub_pd(self, other) }
+    }
+}
+
+impl AvxF32x8 for f32x8 {
+    #[inline]
+    fn sqrt(self) -> Self {
+        unsafe { x86_mm256_sqrt_ps(self) }
+    }
+
+    #[inline]
+    fn addsub(self, other: Self) -> Self {
+        unsafe { x86_mm256_addsub_ps(self, other) }
+    }
+
+    #[inline]
+    fn hadd(self, other: Self) -> Self {
+        unsafe { x86_mm256_hadd_ps(self, other) }
+    }
+
+    #[inline]
+    fn hsub(self, other: Self) -> Self {
+        unsafe { x86_mm256_hsub_ps(self, other) }
     }
 }
 
