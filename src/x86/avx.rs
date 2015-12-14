@@ -1,6 +1,8 @@
 use super::super::*;
 use sixty_four::*;
 
+use super::super::bitcast;
+
 pub use v256::{
     f64x4, bool64fx4, u64x4, i64x4, bool64ix4,
     f32x8, bool32fx8, u32x8, i32x8, bool32ix8,
@@ -101,13 +103,9 @@ pub trait AvxF64x4 {
     fn addsub(self, other: Self) -> Self;
     fn hadd(self, other: Self) -> Self;
     fn hsub(self, other: Self) -> Self;
-}
-
-pub trait AvxF32x8 {
-    fn sqrt(self) -> Self;
-    fn addsub(self, other: Self) -> Self;
-    fn hadd(self, other: Self) -> Self;
-    fn hsub(self, other: Self) -> Self;
+    fn max(self, other: Self) -> Self;
+    fn min(self, other: Self) -> Self;
+    fn move_mask(self) -> u32;
 }
 
 impl AvxF64x4 for f64x4 {
@@ -130,6 +128,51 @@ impl AvxF64x4 for f64x4 {
     fn hsub(self, other: Self) -> Self {
         unsafe { x86_mm256_hsub_pd(self, other) }
     }
+
+    #[inline]
+    fn max(self, other: Self) -> Self {
+        unsafe { x86_mm256_max_pd(self, other) }
+    }
+
+    #[inline]
+    fn min(self, other: Self) -> Self {
+        unsafe { x86_mm256_min_pd(self, other) }
+    }
+
+    #[inline]
+    fn move_mask(self) -> u32 {
+        unsafe { x86_mm256_movemask_pd(self) as u32 }
+    }
+}
+
+pub trait AvxBool64fx4 {
+    fn move_mask(self) -> u32;
+}
+impl AvxBool64fx4 for bool64fx4 {
+    #[inline]
+    fn move_mask(self) -> u32 {
+        unsafe { x86_mm256_movemask_pd(bitcast(self)) as u32 }
+    }
+}
+
+pub trait AvxF32x8 {
+    fn sqrt(self) -> Self;
+    fn addsub(self, other: Self) -> Self;
+    fn hadd(self, other: Self) -> Self;
+    fn hsub(self, other: Self) -> Self;
+    fn max(self, other: Self) -> Self;
+    fn min(self, other: Self) -> Self;
+    fn move_mask(self) -> u32;
+    /// Compute an approximation to the reciprocal of the square root
+    /// of `self`, that is, `f32x8::splat(1.0) / self.sqrt()`.
+    ///
+    /// The accuracy of this approximation is platform dependent.
+    fn approx_rsqrt(self) -> Self;
+    /// Compute an approximation to the reciprocal of `self`, that is,
+    /// `f32x8::splat(1.0) / self`.
+    ///
+    /// The accuracy of this approximation is platform dependent.
+    fn approx_reciprocal(self) -> Self;
 }
 
 impl AvxF32x8 for f32x8 {
@@ -151,6 +194,41 @@ impl AvxF32x8 for f32x8 {
     #[inline]
     fn hsub(self, other: Self) -> Self {
         unsafe { x86_mm256_hsub_ps(self, other) }
+    }
+
+    #[inline]
+    fn max(self, other: Self) -> Self {
+        unsafe { x86_mm256_max_ps(self, other) }
+    }
+
+    #[inline]
+    fn min(self, other: Self) -> Self {
+        unsafe { x86_mm256_min_ps(self, other) }
+    }
+
+    #[inline]
+    fn move_mask(self) -> u32 {
+        unsafe { x86_mm256_movemask_ps(self) as u32 }
+    }
+
+    #[inline]
+    fn approx_reciprocal(self) -> Self {
+        unsafe { x86_mm256_rcp_ps(self) }
+    }
+
+    #[inline]
+    fn approx_rsqrt(self) -> Self {
+        unsafe { x86_mm256_rsqrt_ps(self) }
+    }
+}
+
+pub trait AvxBool32fx8 {
+    fn move_mask(self) -> u32;
+}
+impl AvxBool32fx8 for bool32fx8 {
+    #[inline]
+    fn move_mask(self) -> u32 {
+        unsafe { x86_mm256_movemask_ps(bitcast(self)) as u32 }
     }
 }
 
