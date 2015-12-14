@@ -7,7 +7,9 @@ use test::black_box as bb;
 use test::Bencher as B;
 use simd::f32x4;
 #[cfg(target_feature = "avx")]
-use simd::x86::avx::f64x4;
+use simd::x86::avx::{f32x8, f64x4};
+// #[cfg(target_feature = "avx2")]
+// use simd::x86::avx2::Avx2F32x8;
 
 
 #[bench]
@@ -379,6 +381,70 @@ fn transpose_simd4(b: &mut B) {
             let b2 = shuf1357(a0, a1);
             let b3 = shuf1357(a2, a3);
             bb(&[b0, b1, b2, b3]);
+        }
+    })
+}
+
+#[cfg(target_feature = "avx")]
+#[bench]
+fn transpose_simd8_naive(b: &mut B) {
+    let mut x = [f32x8::splat(0_f32); 2];
+
+    fn shuf0246(v: f32x8, w: f32x8) -> f32x8 {
+        f32x8::new(v.extract(0), v.extract(2), v.extract(4), v.extract(6),
+                   w.extract(0), w.extract(2), w.extract(4), w.extract(6))
+    }
+    fn shuf1357(v: f32x8, w: f32x8) -> f32x8 {
+        f32x8::new(v.extract(1), v.extract(3), v.extract(5), v.extract(7),
+                   w.extract(1), w.extract(3), w.extract(5), w.extract(7),)
+    }
+    b.iter(|| {
+        for _ in 0..100 {
+            let x = bb(&x);
+            let x01 = x[0];
+            let x23 = x[1];
+
+            let a01 = shuf0246(x01, x23);
+            let a23 = shuf1357(x01, x23);
+
+            let b01 = shuf0246(a01, a23);
+            let b23 = shuf1357(a01, a23);
+            bb(&[b01, b23]);
+        }
+    })
+}
+
+#[cfg(target_feature = "avx2")]
+#[bench]
+fn transpose_simd8_avx2(b: &mut B) {
+    let mut x = [f32x8::splat(0_f32); 2];
+
+    fn perm04152637(v: f32x8) -> f32x8 {
+        // broken on rustc 1.7.0-nightly (1ddaf8bdf 2015-12-12)
+        // v.permutevar(i32x8::new(0, 4, 1, 5, 2, 6, 3, 7))
+        f32x8::new(v.extract(0), v.extract(4), v.extract(1), v.extract(5),
+                    v.extract(2), v.extract(6), v.extract(3), v.extract(7))
+    }
+    fn shuf_lo(v: f32x8, w: f32x8) -> f32x8 {
+        f32x8::new(v.extract(0), v.extract(1), w.extract(0), w.extract(1),
+                   v.extract(4), v.extract(5), w.extract(4), w.extract(5),)
+    }
+    fn shuf_hi(v: f32x8, w: f32x8) -> f32x8 {
+        f32x8::new(v.extract(2), v.extract(3), w.extract(2), w.extract(3),
+                   v.extract(6), v.extract(7), w.extract(6), w.extract(7),)
+    }
+    b.iter(|| {
+        for _ in 0..100 {
+            let x = bb(&x);
+            let x01 = x[0];
+            let x23 = x[1];
+
+            let a01 = perm04152637(x01);
+            let a23 = perm04152637(x23);
+
+            let b01 = shuf_lo(a01, a23);
+            let b23 = shuf_hi(a01, a23);
+            bb(&[b01, b23]);
         }
     })
 }

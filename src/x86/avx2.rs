@@ -52,3 +52,14 @@ extern "platform-intrinsic" {
     fn x86_mm256_subs_epi16(x: i16x16, y: i16x16) -> i16x16;
     fn x86_mm256_subs_epu16(x: u16x16, y: u16x16) -> u16x16;
 }
+
+// broken on rustc 1.7.0-nightly (1ddaf8bdf 2015-12-12)
+// pub trait Avx2F32x8 {
+//     fn permutevar(self, other: i32x8) -> f32x8;
+// }
+//
+// impl Avx2F32x8 for f32x8 {
+//     fn permutevar(self, other: i32x8) -> f32x8 {
+//         unsafe { x86_mm256_permutevar8x32_ps(self, other) }
+//     }
+// }
