@@ -1,10 +1,12 @@
 #![feature(test)]
+#![feature(cfg_target_feature)]
 extern crate test;
 extern crate simd;
 
 use test::black_box as bb;
 use test::Bencher as B;
 use simd::f32x4;
+#[cfg(target_feature = "avx")]
 use simd::x86::avx::f64x4;
 
 
@@ -70,6 +72,7 @@ fn multiply_simd4_32(b: &mut B) {
     })
 }
 
+#[cfg(target_feature = "avx")]
 #[bench]
 fn multiply_simd4_64(b: &mut B) {
     let x = [f64x4::splat(1.0_f64); 4];
