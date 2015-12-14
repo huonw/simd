@@ -50,7 +50,7 @@ fn simd4(c_x: f32x4, c_y: f32x4, max_iter: u32) -> u32x4 {
     count
 }
 
-#[cfg(any(target_feature = "avx", target_feature = "avx2"))]
+#[cfg(target_feature = "avx")]
 fn simd8(c_x: f32x8, c_y: f32x8, max_iter: u32) -> u32x8 {
     let mut x = c_x;
     let mut y = c_y;
@@ -63,7 +63,7 @@ fn simd8(c_x: f32x8, c_y: f32x8, max_iter: u32) -> u32x8 {
         let sum = xx + yy;
         let mask = sum.lt(f32x8::splat(4.0));
 
-        if !mask.all() { break }
+        if !mask.any() { break }
         count = count + mask.to_i().select(u32x8::splat(1), u32x8::splat(0));
 
         x = xx - yy + c_x;

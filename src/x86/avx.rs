@@ -51,7 +51,6 @@ extern "platform-intrinsic" {
 #[doc(hidden)]
 pub mod common {
     use super::*;
-    use super::super::super::*;
     use std::mem;
 
     macro_rules! bools {
@@ -75,8 +74,10 @@ pub mod common {
 
     bools! {
         bool32fx8, bool32fx8_all, bool32fx8_any, x86_mm256_testc_ps, x86_mm256_testz_ps;
-        bool32ix8, bool32ix8_all, bool32ix8_any, x86_mm256_testc_si256, x86_mm256_testz_si256;
         bool64fx4, bool64fx4_all, bool64fx4_any, x86_mm256_testc_pd, x86_mm256_testz_pd;
+        bool8ix32, bool8ix32_all, bool8ix32_any, x86_mm256_testc_si256, x86_mm256_testz_si256;
+        bool16ix16, bool16ix16_all, bool16ix16_any, x86_mm256_testc_si256, x86_mm256_testz_si256;
+        bool32ix8, bool32ix8_all, bool32ix8_any, x86_mm256_testc_si256, x86_mm256_testz_si256;
         bool64ix4, bool64ix4_all, bool64ix4_any, x86_mm256_testc_si256, x86_mm256_testz_si256;
     }
 }
