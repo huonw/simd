@@ -339,7 +339,7 @@ fn inverse_simd4(b: &mut B) {
 
 #[bench]
 fn transpose_naive(b: &mut B) {
-    let mut x = [[0_f32; 4]; 4];
+    let x = [[0_f32; 4]; 4];
     b.iter(|| {
         for _ in 0..100 {
             let x = bb(&x);
@@ -353,7 +353,7 @@ fn transpose_naive(b: &mut B) {
 
 #[bench]
 fn transpose_simd4(b: &mut B) {
-    let mut x = [f32x4::splat(0_f32); 4];
+    let x = [f32x4::splat(0_f32); 4];
 
     fn shuf0246(v: f32x4, w: f32x4) -> f32x4 {
         f32x4::new(v.extract(0), v.extract(2),
@@ -388,7 +388,7 @@ fn transpose_simd4(b: &mut B) {
 #[cfg(target_feature = "avx")]
 #[bench]
 fn transpose_simd8_naive(b: &mut B) {
-    let mut x = [f32x8::splat(0_f32); 2];
+    let x = [f32x8::splat(0_f32); 2];
 
     fn shuf0246(v: f32x8, w: f32x8) -> f32x8 {
         f32x8::new(v.extract(0), v.extract(2), v.extract(4), v.extract(6),
@@ -414,11 +414,12 @@ fn transpose_simd8_naive(b: &mut B) {
     })
 }
 
-#[cfg(target_feature = "avx2")]
+#[cfg(target_feature = "avx")]
 #[bench]
-fn transpose_simd8_avx2(b: &mut B) {
-    let mut x = [f32x8::splat(0_f32); 2];
+fn transpose_simd8_avx2_vpermps(b: &mut B) {
+    let x = [f32x8::splat(0_f32); 2];
 
+    // efficient on AVX2 using vpermps
     fn perm04152637(v: f32x8) -> f32x8 {
         // broken on rustc 1.7.0-nightly (1ddaf8bdf 2015-12-12)
         // v.permutevar(i32x8::new(0, 4, 1, 5, 2, 6, 3, 7))
@@ -444,6 +445,40 @@ fn transpose_simd8_avx2(b: &mut B) {
 
             let b01 = shuf_lo(a01, a23);
             let b23 = shuf_hi(a01, a23);
+            bb(&[b01, b23]);
+        }
+    })
+}
+
+#[cfg(target_feature = "avx")]
+#[bench]
+fn transpose_simd8_avx2_vpermpd(b: &mut B) {
+    let x = [f32x8::splat(0_f32); 2];
+
+    // efficient on AVX2 using vpermpd
+    fn perm01452367(v: f32x8) -> f32x8 {
+        f32x8::new(v.extract(0), v.extract(1), v.extract(4), v.extract(5),
+                    v.extract(2), v.extract(3), v.extract(6), v.extract(7))
+    }
+    fn shuf_lo_ps(v: f32x8, w: f32x8) -> f32x8 {
+        f32x8::new(v.extract(0), w.extract(0), v.extract(1), w.extract(1),
+                   v.extract(4), w.extract(4), v.extract(5), w.extract(5),)
+    }
+    fn shuf_hi_ps(v: f32x8, w: f32x8) -> f32x8 {
+        f32x8::new(v.extract(2), w.extract(2), v.extract(3), w.extract(3),
+                   v.extract(6), w.extract(6), v.extract(7), w.extract(7),)
+    }
+    b.iter(|| {
+        for _ in 0..100 {
+            let x = bb(&x);
+            let x01 = x[0];
+            let x23 = x[1];
+
+            let a01 = perm01452367(x01);
+            let a23 = perm01452367(x23);
+
+            let b01 = shuf_lo_ps(a01, a23);
+            let b23 = shuf_hi_ps(a01, a23);
             bb(&[b01, b23]);
         }
     })
