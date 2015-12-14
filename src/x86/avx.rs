@@ -48,6 +48,39 @@ extern "platform-intrinsic" {
     fn x86_mm256_testz_si256(x: u64x4, y: u64x4) -> i32;
 }
 
+#[doc(hidden)]
+pub mod common {
+    use super::*;
+    use super::super::super::*;
+    use std::mem;
+
+    macro_rules! bools {
+        ($($ty: ty, $all: ident, $any: ident, $testc: ident, $testz: ident;)*) => {
+            $(
+                #[inline]
+                pub fn $all(x: $ty) -> bool {
+                    unsafe {
+                        super::$testc(mem::transmute(x), mem::transmute(<$ty>::splat(true))) != 0
+                    }
+                }
+                #[inline]
+                pub fn $any(x: $ty) -> bool {
+                    unsafe {
+                        super::$testz(mem::transmute(x), mem::transmute(x)) == 0
+                    }
+                }
+                )*
+        }
+    }
+
+    bools! {
+        bool32fx8, bool32fx8_all, bool32fx8_any, x86_mm256_testc_ps, x86_mm256_testz_ps;
+        bool32ix8, bool32ix8_all, bool32ix8_any, x86_mm256_testc_si256, x86_mm256_testz_si256;
+        bool64fx4, bool64fx4_all, bool64fx4_any, x86_mm256_testc_pd, x86_mm256_testz_pd;
+        bool64ix4, bool64ix4_all, bool64ix4_any, x86_mm256_testc_si256, x86_mm256_testz_si256;
+    }
+}
+
 // 128-bit vectors:
 
 // 32 bit floats
