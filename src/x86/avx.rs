@@ -6,6 +6,7 @@ pub use v256::{
     f32x8, bool32fx8, u32x8, i32x8, bool32ix8,
     u16x16, i16x16, bool16ix16,
     u8x32, i8x32, bool8ix32,
+    LowHigh128
 };
 
 #[allow(dead_code)]
