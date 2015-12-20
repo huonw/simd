@@ -39,7 +39,7 @@ pub fn axpy8(z: &mut [f32], a: f32, x: &[f32], y: &[f32]) {
 
 
 #[cfg(not(target_feature = "avx"))]
-pub fn axpy8(z: &mut [f32], a: f32, x: &[f32], y: &[f32]) {
+pub fn axpy8(_: &mut [f32], _: f32, _: &[f32], _: &[f32]) {
     unimplemented!()
 }
 

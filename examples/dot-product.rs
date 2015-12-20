@@ -42,7 +42,7 @@ pub fn dot8(x: &[f32], y: &[f32]) -> f32 {
 
 
 #[cfg(not(target_feature = "avx"))]
-pub fn dot8(x: &[f32], y: &[f32]) -> f32 {
+pub fn dot8(_: &[f32], _: &[f32]) -> f32 {
     unimplemented!()
 }
 
