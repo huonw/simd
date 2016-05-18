@@ -169,7 +169,7 @@ macro_rules! simd {
             type Bool = $bool;
             type Elem = $elem;
         }
-            impl Clone for $ty { fn clone(&self) -> Self { *self } }
+            impl Clone for $ty { #[inline] fn clone(&self) -> Self { *self } }
             )*)*}
 }
 simd! {
