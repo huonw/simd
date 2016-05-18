@@ -3,6 +3,18 @@ name = "simd"
 version = "0.1.0"
 authors = ["Huon Wilson <dbau.pp+github@gmail.com>"]
 
+homepage = "https://github.com/huonw/simd"
+repository = "https://github.com/huonw/simd"
+documentation = "http://huonw.github.io/simd/simd/"
+license = "MIT/Apache-2.0"
+keywords = ["simd", "data-parallel"]
+readme = "README.md"
+
+description = """
+`simd` offers limited cross-platform access to SIMD instructions on
+CPUs, as well as raw interfaces to platform-specific instructions.
+"""
+
 [dependencies]
 serde = { version = "0.4", optional = true }
 serde_macros = { version = "0.4", optional = true }
@@ -11,5 +23,4 @@ serde_macros = { version = "0.4", optional = true }
 cfg-if = "0.1"
 
 [features]
-
 doc = []
