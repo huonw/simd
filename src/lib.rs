@@ -24,20 +24,45 @@ extern crate serde;
 
 /// Boolean type for 8-bit integers.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct bool8i(i8);
 /// Boolean type for 16-bit integers.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct bool16i(i16);
 /// Boolean type for 32-bit integers.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct bool32i(i32);
 /// Boolean type for 32-bit floats.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct bool32f(i32);
+
+macro_rules! bool {
+    ($($name: ident, $inner: ty;)*) => {
+        $(
+            impl From<bool> for $name {
+                #[inline]
+                fn from(b: bool) -> $name {
+                    $name(-(b as $inner))
+                }
+            }
+            impl From<$name> for bool {
+                #[inline]
+                fn from(b: $name) -> bool {
+                    b.0 != 0
+                }
+            }
+            )*
+    }
+}
+bool! {
+    bool8i, i8;
+    bool16i, i16;
+    bool32i, i32;
+    bool32f, i32;
+}
 
 /// Types that are SIMD vectors.
 pub unsafe trait Simd {
