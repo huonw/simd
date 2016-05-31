@@ -1,6 +1,6 @@
 [package]
 name = "simd"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Huon Wilson <dbau.pp+github@gmail.com>"]
 
 homepage = "https://github.com/huonw/simd"
