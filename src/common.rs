@@ -161,12 +161,15 @@ macro_rules! bool_impls {
         [$(#[$cvt_meta: meta] $cvt: ident -> $cvt_to: ident),*];
         )*) => {
         $(impl $name {
+            /// Convert to integer representation.
             #[inline]
-            fn to_repr(self) -> $repr {
+            pub fn to_repr(self) -> $repr {
                 unsafe {mem::transmute(self)}
             }
+            /// Convert from integer representation.
             #[inline]
-            fn from_repr(x: $repr) -> Self {
+            #[inline]
+            pub fn from_repr(x: $repr) -> Self {
                 unsafe {mem::transmute(x)}
             }
 
