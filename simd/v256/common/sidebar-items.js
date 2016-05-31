@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["bool16ix16_all",""],["bool16ix16_any",""],["bool32fx8_all",""],["bool32fx8_any",""],["bool32ix8_all",""],["bool32ix8_any",""],["bool64fx4_all",""],["bool64fx4_any",""],["bool64ix4_all",""],["bool64ix4_any",""],["bool8ix32_all",""],["bool8ix32_any",""]]});

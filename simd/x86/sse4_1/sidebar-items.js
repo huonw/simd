@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["Sse41Bool16ix8",""],["Sse41Bool32ix4",""],["Sse41Bool64ix2",""],["Sse41Bool8ix16",""],["Sse41F32x4",""],["Sse41F64x2",""],["Sse41I16x8",""],["Sse41I32x4",""],["Sse41I64x2",""],["Sse41I8x16",""],["Sse41U16x8",""],["Sse41U32x4",""],["Sse41U64x2",""],["Sse41U8x16",""]]});

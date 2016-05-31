@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["bool16ix8_all",""],["bool16ix8_any",""],["bool32fx4_all",""],["bool32fx4_any",""],["bool32ix4_all",""],["bool32ix4_any",""],["bool8ix16_all",""],["bool8ix16_any",""],["f32x4_approx_reciprocal",""],["f32x4_approx_rsqrt",""],["f32x4_max",""],["f32x4_min",""],["f32x4_sqrt",""]]});

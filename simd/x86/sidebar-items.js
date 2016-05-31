@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["avx",""],["avx2",""],["sse2",""],["sse3",""],["sse4_1",""],["sse4_2",""],["ssse3",""]]});
