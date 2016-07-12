@@ -142,7 +142,7 @@ impl Ssse3U8x16 for u8x16 {
     fn shuffle_bytes(self, indices: Self) -> Self {
         unsafe {bitcast!(x86_mm_shuffle_epi8(self, indices))}
     }
-
+    #[inline]
     fn maddubs(self, other: i8x16) -> i16x8 {
         unsafe { x86_mm_maddubs_epi16(self, other) }
     }

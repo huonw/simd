@@ -145,6 +145,7 @@ macro_rules! not_impls {
     ($($ty: ident,)*) => {
         $(impl ops::Not for $ty {
             type Output = Self;
+            #[inline]
             fn not(self) -> Self {
                 $ty::splat(!0) ^ self
             }
