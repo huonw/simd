@@ -522,9 +522,9 @@ pub mod common {
     }
 
     bools! {
-        bool32fx4, u32x2, bool32fx4_all(arm_vpmin_u32), bool32fx4_any(arm_vpmax_u32);
-        bool8ix16, u8x8, bool8ix16_all(arm_vpmin_u8), bool8ix16_any(arm_vpmax_u8);
-        bool16ix8, u16x4, bool16ix8_all(arm_vpmin_u16), bool16ix8_any(arm_vpmax_u16);
-        bool32ix4, u32x2, bool32ix4_all(arm_vpmin_u32), bool32ix4_any(arm_vpmax_u32);
+        bool32fx4, arm::neon::u32x2, bool32fx4_all(arm_vpmin_u32), bool32fx4_any(arm_vpmax_u32);
+        bool8ix16, arm::neon::u8x8, bool8ix16_all(arm_vpmin_u8), bool8ix16_any(arm_vpmax_u8);
+        bool16ix8, arm::neon::u16x4, bool16ix8_all(arm_vpmin_u16), bool16ix8_any(arm_vpmax_u16);
+        bool32ix4, arm::neon::u32x2, bool32ix4_all(arm_vpmin_u32), bool32ix4_any(arm_vpmax_u32);
     }
 }
